@@ -41,6 +41,8 @@ services:
       [
         'start-dev'
       ]
+    volumes:
+      - ./keycloak-configuration/:/opt/keycloak/data/import/
     environment:
       KC_DB: 'postgres'
       KC_DB_URL_HOST: 'suk-postgres-keycloak'
@@ -57,7 +59,7 @@ services:
   
   zookeeper:
     image: 'confluentinc/cp-zookeeper:7.7.1'
-    container_name: 'suk-keycloak-application-zookeeper'
+    container_name: 'suk-zookeeper'
     ports:
       - "2181:2181"
     environment:

@@ -12,4 +12,13 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Keycloak.AuthServices.Authentication" Version="2.5.3" />
+      <PackageReference Include="Keycloak.AuthServices.Authorization" Version="2.5.3" />
+      <PackageReference Include="Keycloak.AuthServices.Common" Version="2.5.3" />
+      <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.9.0" />
+      <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.9.0" />
+      <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.9.0" />
+    </ItemGroup>
+
 </Project>
