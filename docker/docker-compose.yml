@@ -1,0 +1,108 @@
+﻿networks:
+  default:
+    name: "synchronization-users-keycloak"
+
+volumes:
+  suk-postgres-keycloak:
+  suk-postgres:
+
+
+services:
+  postgres-keycloak:
+    image: 'postgres:17.0'
+    container_name: 'suk-postgres-keycloak'
+    ports:
+      - '5432:5432'
+    volumes:
+      - suk-postgres-keycloak:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_KEYCLOAK_USER_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_KEYCLOAK_USER}
+      POSTGRES_DB: ${POSTGRES_KEYCLOAK_DB}
+  
+  postgres:
+    image: 'postgres:17.0'
+    container_name: 'suk-postgres'
+    ports:
+      - '5433:5432'
+    volumes:
+      - suk-postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_USER_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+  
+  keycloak:
+    image: 'quay.io/keycloak/keycloak:26.0.0'
+    container_name: 'suk-keycloak'
+    ports:
+      - "8080:8080"
+    command:
+      [
+        'start-dev'
+      ]
+    environment:
+      KC_DB: 'postgres'
+      KC_DB_URL_HOST: 'suk-postgres-keycloak'
+      KC_DB_URL_DATABASE: ${POSTGRES_KEYCLOAK_DB}
+      KC_DB_USERNAME: ${POSTGRES_KEYCLOAK_USER}
+      KC_DB_PASSWORD: ${POSTGRES_KEYCLOAK_USER_PASSWORD}
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_USER}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_USER_PASSWORD}
+      KC_HTTP_ENABLED: 'true'
+      KC_HOSTNAME_STRICT_HTTPS: 'false'
+      KC_HEALTH_ENABLED: 'true'
+    depends_on:
+      - postgres-keycloak
+  
+  zookeeper:
+    image: 'confluentinc/cp-zookeeper:7.7.1'
+    container_name: 'suk-keycloak-application-zookeeper'
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+  
+  kafka-broker:
+    image: 'confluentinc/cp-kafka:7.7.1'
+    container_name: 'suk-kafka-broker'
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "9101:9101"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://suk-kafka-broker:29092,PLAINTEXT_HOST://localhost:9092
+      
+  
+  kafka-ui:
+    container_name: 'suk-kafka-ui'
+    image: 'provectuslabs/kafka-ui:latest'
+    ports:
+      - 8082:8080
+    depends_on:
+      - kafka-broker
+      - kafka-connect
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-broker:29092
+      KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: keycloak-events-outbox
+      KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://suk-kafka-connect:8083
+  
+  kafka-connect:
+    image: 'kafka-connect-jdbc:new-local'
+    build:
+      context: ./kafka-connect/
+    container_name: 'suk-kafka-connect'
+    ports:
+      - '8083:8083'
+    depends_on:
+      - kafka-broker
+      - postgres-keycloak
