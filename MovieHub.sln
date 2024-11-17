@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieHub.Api", "MovieHub.Api\MovieHub.Api.csproj", "{9CC58B19-8C7C-4251-8D65-E00BA8701652}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieHub.Domain", "MovieHub.Domain\MovieHub.Domain.csproj", "{DCF92643-85E4-4642-A0F6-3C0386F96F9B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieHub.Domain.DependencyInjection", "MovieHub.Domain.DependencyInjection\MovieHub.Domain.DependencyInjection.csproj", "{D77B26BA-0A20-4416-92A9-2CE08E34C7D1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MovieHub", "MovieHub", "{0A81A912-A30D-499C-A45E-EE24011EFC7C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieHub.Storage", "MovieHub.Storage\MovieHub.Storage.csproj", "{ACF1B481-187E-4B6E-9BB2-2118F3A8D9F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieHub.Storage.DependencyInjection", "MovieHub.Storage.DependencyInjection\MovieHub.Storage.DependencyInjection.csproj", "{E61433C9-C0D1-4BF4-A79B-196597574E6D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9CC58B19-8C7C-4251-8D65-E00BA8701652}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CC58B19-8C7C-4251-8D65-E00BA8701652}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CC58B19-8C7C-4251-8D65-E00BA8701652}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CC58B19-8C7C-4251-8D65-E00BA8701652}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCF92643-85E4-4642-A0F6-3C0386F96F9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCF92643-85E4-4642-A0F6-3C0386F96F9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCF92643-85E4-4642-A0F6-3C0386F96F9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCF92643-85E4-4642-A0F6-3C0386F96F9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D77B26BA-0A20-4416-92A9-2CE08E34C7D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D77B26BA-0A20-4416-92A9-2CE08E34C7D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D77B26BA-0A20-4416-92A9-2CE08E34C7D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D77B26BA-0A20-4416-92A9-2CE08E34C7D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACF1B481-187E-4B6E-9BB2-2118F3A8D9F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACF1B481-187E-4B6E-9BB2-2118F3A8D9F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACF1B481-187E-4B6E-9BB2-2118F3A8D9F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACF1B481-187E-4B6E-9BB2-2118F3A8D9F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E61433C9-C0D1-4BF4-A79B-196597574E6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E61433C9-C0D1-4BF4-A79B-196597574E6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E61433C9-C0D1-4BF4-A79B-196597574E6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E61433C9-C0D1-4BF4-A79B-196597574E6D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9CC58B19-8C7C-4251-8D65-E00BA8701652} = {0A81A912-A30D-499C-A45E-EE24011EFC7C}
+		{DCF92643-85E4-4642-A0F6-3C0386F96F9B} = {0A81A912-A30D-499C-A45E-EE24011EFC7C}
+		{D77B26BA-0A20-4416-92A9-2CE08E34C7D1} = {0A81A912-A30D-499C-A45E-EE24011EFC7C}
+		{ACF1B481-187E-4B6E-9BB2-2118F3A8D9F8} = {0A81A912-A30D-499C-A45E-EE24011EFC7C}
+		{E61433C9-C0D1-4BF4-A79B-196597574E6D} = {0A81A912-A30D-499C-A45E-EE24011EFC7C}
+	EndGlobalSection
+EndGlobal

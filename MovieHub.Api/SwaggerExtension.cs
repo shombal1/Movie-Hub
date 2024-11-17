@@ -1,6 +1,6 @@
 ﻿using Microsoft.OpenApi.Models;
 
-namespace SynchronizationUsersKeycloak.Api;
+namespace MovieHub.Api;
 
 public static class SwaggerExtension
 {

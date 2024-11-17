@@ -13,12 +13,22 @@
     </ItemGroup>
 
     <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
       <PackageReference Include="Keycloak.AuthServices.Authentication" Version="2.5.3" />
       <PackageReference Include="Keycloak.AuthServices.Authorization" Version="2.5.3" />
       <PackageReference Include="Keycloak.AuthServices.Common" Version="2.5.3" />
       <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.9.0" />
       <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.9.0" />
       <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.9.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\MovieHub.Domain.DependencyInjection\MovieHub.Domain.DependencyInjection.csproj" />
+      <ProjectReference Include="..\MovieHub.Domain\MovieHub.Domain.csproj" />
+      <ProjectReference Include="..\MovieHub.Storage.DependencyInjection\MovieHub.Storage.DependencyInjection.csproj" />
     </ItemGroup>
 
 </Project>
