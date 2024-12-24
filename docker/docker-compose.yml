@@ -4,7 +4,6 @@
 
 volumes:
   movie-hub-postgres-keycloak:
-  movie-hub-postgres:
 
 
 services:
@@ -20,18 +19,6 @@ services:
       POSTGRES_USER: ${POSTGRES_KEYCLOAK_USER}
       POSTGRES_DB: ${POSTGRES_KEYCLOAK_DB}
   
-  postgres:
-    image: 'postgres:17.0'
-    container_name: 'movie-hub-postgres'
-    ports:
-      - '5433:5432'
-    volumes:
-      - movie-hub-postgres:/var/lib/postgresql/data
-    environment:
-      POSTGRES_PASSWORD: ${POSTGRES_USER_PASSWORD}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_DB: ${POSTGRES_DB}
-  
   keycloak:
     image: 'my-keycloak-kafka:new-local'
     build:
@@ -42,11 +29,12 @@ services:
     command:
       [
         'start-dev',
+        '-Dkeycloak.profile.feature.upload_scripts=enabled',
         '--import-realm',
         '--log-console-color=true'
       ]
-    volumes:
-      - ./keycloak/configuration/:/opt/keycloak/data/import/
+#    volumes:
+#      - ./keycloak/configuration/:/opt/keycloak/data/import/
     environment:
       KC_DB: 'postgres'
       KC_DB_URL_HOST: 'movie-hub-postgres-keycloak'
@@ -59,6 +47,7 @@ services:
       KAFKA_CLIENT_ID: keycloak
       KAFKA_EVENTS: REGISTER
       KAFKA_BOOTSTRAP_SERVERS: movie-hub-kafka-broker:29092
+      KEYCLOAK_IMPORT: ./keycloak/configuration/movie-hub-realm-export.json
     depends_on:
       - postgres-keycloak
   
@@ -87,7 +76,7 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://movie-hub-kafka-broker:29092,PLAINTEXT_HOST://localhost:9092
-      
+  
   
   kafka-ui:
     container_name: 'movie-hub-kafka-ui'
@@ -102,3 +91,20 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-broker:29092
       KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: keycloak-events-outbox
       KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://movie-hub-kafka-connect:8083
+  
+  
+  
+#  api:
+#    build:
+#      context: ./..
+#      dockerfile: docker/Dockerfile
+#    container_name: 'movie-hub-api'
+#    image: 'my-movie-hub:new-local'
+#    ports:
+#      - '7189:8080'
+#    environment:
+##      ASPNETCORE_ENVIRONMENT: 'Development'
+#      ASPNET_URLS: 'http://0.0.0.0:7189'
+##      ConnectionStrings__EnglishHubDbContext: 'Host=postgres;User Id=shombal;Password=1111;Database=english_hub;Port=5432'
+##      ConnectionStrings__Logs: 'http://loki:3100'
+##      ConnectionStrings__Tracing: 'http://jaeger:4318/v1/traces'
