@@ -12,7 +12,7 @@ public class CreateRegisteredUserConsumer(
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         await Task.Yield();
-
+        
         consumer.Subscribe("movie-hub.keycloak-events");
         
         while (!stoppingToken.IsCancellationRequested)

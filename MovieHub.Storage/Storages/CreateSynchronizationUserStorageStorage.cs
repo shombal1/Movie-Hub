@@ -1,4 +1,6 @@
-﻿using MovieHub.Domain.BackgroundServices.CreateRegisteredUser;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
+using MovieHub.Domain.BackgroundServices.CreateRegisteredUser;
 using MovieHub.Storage.Entities;
 
 namespace MovieHub.Storage.Storages;
@@ -7,11 +9,9 @@ public class CreateSynchronizationUserStorageStorage(MovieHubDbContext dbContext
 {
     public async Task Create(Guid synchronizationUserId, CancellationToken cancellationToken)
     {
-        await dbContext.Users.AddAsync(new User()
+        await dbContext.Users.InsertOneAsync(session: dbContext.CurrentSession,document:new User()
         {
             Id = synchronizationUserId
-        }, cancellationToken);
-
-        await dbContext.SaveChangesAsync(cancellationToken);
+        },cancellationToken: cancellationToken);
     }
 }

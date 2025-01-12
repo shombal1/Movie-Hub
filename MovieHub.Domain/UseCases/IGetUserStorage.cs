@@ -2,7 +2,7 @@
 
 namespace MovieHub.Domain.UseCases;
 
-public interface IGetUserStorage
+public interface IGetUserStorage : IStorage
 {
     public Task<User> GetUser(Guid id);
 

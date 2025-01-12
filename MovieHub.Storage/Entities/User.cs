@@ -1,8 +1,11 @@
-﻿namespace MovieHub.Storage.Entities;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
+namespace MovieHub.Storage.Entities;
 
 public class User
 {
+    [BsonId]
+    [BsonGuidRepresentation(GuidRepresentation.Standard)]
     public Guid Id { get; set; }
-    
-    public ICollection<MovieBasket> MovieBaskets { get; set; } = null!;
 }
