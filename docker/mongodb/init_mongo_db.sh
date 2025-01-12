@@ -16,6 +16,6 @@ sleep 5s
 winpty docker exec -it shardsvr2_1 mongosh --eval "load('scripts/init.js'); quit();"
 
 sleep 5s
-winpty docker exec -it mongos mongosh --eval "load('scripts/init.js'); quit();"
+winpty docker exec -it mongos mongosh --eval "load('scripts/init.js'); load('scripts/initialization-db.js'); quit();"
 
 echo 'end initialization mongo'

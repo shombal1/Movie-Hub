@@ -1,19 +1,35 @@
-﻿using System.Reflection;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 using MovieHub.Storage.Entities;
 
 namespace MovieHub.Storage;
 
-public class MovieHubDbContext(DbContextOptions<MovieHubDbContext> options) : DbContext(options)
+// registry how scope
+public class MovieHubDbContext : IAsyncDisposable
 {
-    public DbSet<MovieBasket> MovieBaskets { get; set; }
-    public DbSet<Movie> Movies { get; set; }
-    public DbSet<User> Users { get; set; }
+    private IMongoDatabase Database { get; }
+    
+    public IMongoCollection<MovieBasket> MovieBaskets { get; }
+    public IMongoCollection<Movie> Movies { get; }
+    public IMongoCollection<User> Users { get; }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    public IClientSessionHandle CurrentSession { get; }
+
+    public MovieHubDbContext(IOptions<MongoDbConfigure> options,IMongoClient mongoClient)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetAssembly(typeof(MovieHubDbContext))!);
+        MongoDbConfigure configure = options.Value;
 
-        base.OnModelCreating(modelBuilder);
+        Database = mongoClient.GetDatabase(configure.NameDataBase);
+
+        CurrentSession = mongoClient.StartSession();
+        
+        MovieBaskets = Database.GetCollection<MovieBasket>(configure.NameMovieBasketCollection);
+        Movies = Database.GetCollection<Movie>(configure.NameMovieCollection);
+        Users = Database.GetCollection<User>(configure.NameUserCollection);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        CurrentSession.Dispose();
     }
 }

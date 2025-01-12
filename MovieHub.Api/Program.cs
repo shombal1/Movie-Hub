@@ -7,6 +7,7 @@ using MovieHub.Api;
 using MovieHub.Api.Middleware;
 using MovieHub.Domain.BackgroundServices.CreateRegisteredUser;
 using MovieHub.Domain.DependencyInjection;
+using MovieHub.Storage;
 using MovieHub.Storage.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,7 +18,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddDomain();
-builder.Services.AddStorage(configuration.GetConnectionString("MovieHubDbContext")!);
+builder.Services.Configure<MongoDbConfigure>(builder.Configuration.GetSection("MongoDbConfigure").Bind);
+builder.Services.AddStorage(configuration.GetConnectionString("MovieHubMongoDb")!);
+
 
 builder.Services.Configure<CreateRegisteredUserConsumerConfig>(configuration
     .GetSection("KafkaCreateRegisteredUserConsumer").Bind);
