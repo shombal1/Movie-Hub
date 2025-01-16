@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Content Include="..\.gitignore">
+        <Link>.gitignore</Link>
+      </Content>
+      <Content Include="..\README.md">
+        <Link>README.md</Link>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Keycloak.AuthServices.Authentication" Version="2.5.3" />
+      <PackageReference Include="Keycloak.AuthServices.Authorization" Version="2.5.3" />
+      <PackageReference Include="Keycloak.AuthServices.Common" Version="2.5.3" />
+      <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.9.0" />
+      <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.9.0" />
+      <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.9.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\MovieHub.Engine.Domain.DependencyInjection\MovieHub.Engine.Domain.DependencyInjection.csproj" />
+      <ProjectReference Include="..\MovieHub.Engine.Domain\MovieHub.Engine.Domain.csproj" />
+      <ProjectReference Include="..\MovieHub.Engine.Storage.DependencyInjection\MovieHub.Engine.Storage.DependencyInjection.csproj" />
+    </ItemGroup>
+
+</Project>
