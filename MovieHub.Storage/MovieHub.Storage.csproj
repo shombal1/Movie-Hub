@@ -14,4 +14,8 @@
       <ProjectReference Include="..\MovieHub.Domain\MovieHub.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Storages\" />
+    </ItemGroup>
+
 </Project>

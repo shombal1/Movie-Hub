@@ -1,7 +1,5 @@
-﻿using Confluent.Kafka;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using MovieHub.Domain.Authentication;
-using MovieHub.Domain.BackgroundServices.CreateRegisteredUser;
 
 namespace MovieHub.Domain.DependencyInjection;
 

@@ -1,11 +1,9 @@
-using Confluent.Kafka;
 using Keycloak.AuthServices.Authentication;
 using Keycloak.AuthServices.Authorization;
 using Keycloak.AuthServices.Common;
 using Microsoft.Extensions.Options;
 using MovieHub.Api;
 using MovieHub.Api.Middleware;
-using MovieHub.Domain.BackgroundServices.CreateRegisteredUser;
 using MovieHub.Domain.DependencyInjection;
 using MovieHub.Storage;
 using MovieHub.Storage.DependencyInjection;
@@ -21,11 +19,6 @@ builder.Services.AddDomain();
 builder.Services.Configure<MongoDbConfigure>(builder.Configuration.GetSection("MongoDbConfigure").Bind);
 builder.Services.AddStorage(configuration.GetConnectionString("MovieHubMongoDb")!);
 
-
-builder.Services.Configure<CreateRegisteredUserConsumerConfig>(configuration
-    .GetSection("KafkaCreateRegisteredUserConsumer").Bind);
-builder.Services.AddSingleton(sp => new ConsumerBuilder<byte[], byte[]>(
-    sp.GetRequiredService<IOptions<CreateRegisteredUserConsumerConfig>>().Value).Build());
 
 builder.Services.AddKeycloakWebApiAuthentication(
     configuration,
