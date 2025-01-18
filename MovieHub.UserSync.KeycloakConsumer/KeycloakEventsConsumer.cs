@@ -35,9 +35,9 @@ public class KeycloakEventsConsumer(
                 await createUserStorage.Create(eventEntity.UserId.Value,stoppingToken);
                 
             }
-            catch (MongoDuplicateKeyException e)
+            catch (MongoWriteException e) when (e.WriteError.Category == ServerErrorCategory.DuplicateKey)
             {
-                logger.LogError(e,"error");
+                logger.LogWarning(e, "User with id {user_id} already exists", eventEntity.UserId);
             }
 
             consumer.Commit(consumerResult);
