@@ -2,6 +2,7 @@ using Confluent.Kafka;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using MovieHub.UserSync.KeycloakConsumer;
+using MovieHub.UserSync.KeycloakConsumer.Monitoring;
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
@@ -23,6 +24,9 @@ builder.Services.AddSingleton(sp => new ConsumerBuilder<byte[], byte[]>(
 builder.Services.AddSingleton<ICreateUserStorage, CreateUserStorage>();
 
 builder.Services.AddHostedService<KeycloakEventsConsumer>();
+
+builder.Services.AddTracing(configuration);
+builder.Services.AddLogin(configuration,builder.Environment);
 
 var app = builder.Build();
 
