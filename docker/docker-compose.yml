@@ -4,6 +4,7 @@
 
 volumes:
   movie-hub-postgres-keycloak:
+  movie-hub-opensearch:
 
 
 services:
@@ -110,6 +111,30 @@ services:
       - '14268:14268'
       - '14269:14269'
       - '9411:9411'
+    
+  opensearch: 
+    image: 'opensearchproject/opensearch:latest'
+    container_name: 'movie-hub-opensearch'
+    environment:
+      discovery.type: 'single-node'
+      OPENSEARCH_INITIAL_ADMIN_PASSWORD: 'Vq5ZerK6j9'
+      plugins.security.disabled: 'true'
+    volumes:
+      - movie-hub-opensearch:/usr/share/opensearch/data
+    ports:
+      - 9200:9200
+      - 9600:9600
+    
+  opensearch-dashboards:
+    image: 'opensearchproject/opensearch-dashboards:latest'
+    container_name: 'movie-hub-opensearch-dashboards'
+    ports:
+      - '5601:5601'
+    expose:
+      - "5601"
+    environment:
+      OPENSEARCH_HOSTS: '["http://movie-hub-opensearch:9200"]'
+      DISABLE_SECURITY_DASHBOARDS_PLUGIN: 'true'
   
   
   
