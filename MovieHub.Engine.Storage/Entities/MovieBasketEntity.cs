@@ -3,13 +3,15 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace MovieHub.Engine.Storage.Entities;
 
-public class MovieBasket
+public class MovieBasketEntity
 {
     [BsonId]
-    public ObjectId Id { get; set; }
+    [BsonGuidRepresentation(GuidRepresentation.Standard)]
+    public Guid Id { get; set; }
 
     [BsonGuidRepresentation(GuidRepresentation.Standard)]
     public Guid UserId { get; set; }
     
-    public ObjectId MovieId { get; set; }
+    [BsonGuidRepresentation(GuidRepresentation.Standard)]
+    public Guid MovieId { get; set; }
 }

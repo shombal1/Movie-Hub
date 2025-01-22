@@ -4,11 +4,16 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace MovieHub.Engine.Storage.Entities;
 
-public class Movie
+public abstract class MediaEntity
 {
     [BsonId]
-    public ObjectId Id { get; set; }
+    [BsonGuidRepresentation(GuidRepresentation.Standard)]
+    public Guid Id { get; set; }
     [MaxLength(100)] public string Title { get; set; } = "";
     [MaxLength(1000)] public string Description { get; set; } = "";
     public DateOnly ReleasedAt { get; set; }
+    public DateTimeOffset PublishedAt { get; set; }
+    public string Country { get; set; } = "";
+    public IEnumerable<string> Genre { get; set; } = null!;
+    public IEnumerable<string> Director { get; set; } = null!;
 }

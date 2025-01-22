@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace MovieHub.Engine.Storage.Entities;
 
-public class User
+public class UserEntity
 {
     [BsonId]
     [BsonGuidRepresentation(GuidRepresentation.Standard)]

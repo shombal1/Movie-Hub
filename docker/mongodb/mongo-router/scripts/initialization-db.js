@@ -2,9 +2,9 @@
 db.Users.createIndex({_id: 1});
 sh.shardCollection("MovieHub.Users", {_id: "hashed"});
 
-db.createCollection("Movies");
-db.Movies.createIndex({_id: 1});
-sh.shardCollection("MovieHub.Movies", {_id: "hashed"});
+db.createCollection("Medias");
+db.Medias.createIndex({_id: 1});
+sh.shardCollection("MovieHub.Medias", {_id: "hashed"});
 
 db.createCollection("MovieBaskets");
 db.MovieBaskets.createIndex({UserId: 1});
