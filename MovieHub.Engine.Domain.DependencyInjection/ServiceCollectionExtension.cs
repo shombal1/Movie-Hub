@@ -9,15 +9,7 @@ public static class ServiceCollectionExtension
     {
         services.AddScoped<IIdentityProvider, IdentityProvider>();
 
-        // services.AddHostedService<CreateRegisteredUserConsumer>(c =>
-        // {
-        //     var scope = c.CreateScope();
-        //     var serviceProvider = scope.ServiceProvider;
-        //
-        //     return new CreateRegisteredUserConsumer(
-        //         serviceProvider.GetRequiredService<IConsumer<byte[], byte[]>>(),
-        //         serviceProvider.GetRequiredService<ICreateSynchronizationUserStorage>());
-        // });
+        services.AddMediatR(conf => conf.RegisterServicesFromAssembly(typeof(IUnitOfWork).Assembly));
 
         return services;
     }
