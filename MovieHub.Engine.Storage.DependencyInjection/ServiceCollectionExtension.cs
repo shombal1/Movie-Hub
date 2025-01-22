@@ -23,6 +23,8 @@ public static class ServiceCollectionExtension
         services.AddSingleton<IMongoClient>(_ => new MongoClient(contextConnectionString));
         services.AddScoped<MovieHubDbContext>();
         
+        services.AddScoped<IGetMediaStorage,GetMediaStorage>();
+        
         services.AddSingleton<IUnitOfWork, UnitOfWork>();
 
         services.AddStorageMapster();
