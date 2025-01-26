@@ -1,4 +1,5 @@
 ﻿using MapsterMapper;
+using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using MovieHub.Engine.Domain.Models;
 using MovieHub.Engine.Domain.UseCases.GetMedia;
@@ -6,19 +7,24 @@ using MovieHub.Engine.Storage.Entities;
 
 namespace MovieHub.Engine.Storage.Storages;
 
-public class GetMediaStorage(MovieHubDbContext dbContext,IMapper mapper) : IGetMediaStorage
+public class GetMediaStorage(MovieHubDbContext dbContext, IMapper mapper, ILogger<GetMediaStorage> logger)
+    : IGetMediaStorage
 {
-    public async Task<IEnumerable<Media>> Get(ParameterSorting parameterSorting, TypeSorting typeSorting,
-        string? country, int? year, int skip, int take, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Media>> Get(
+        MediaFilter mediaFilter,
+        CancellationToken cancellationToken)
     {
-        SortDefinition<MediaEntity> sortDefinition = GetSortDefinition(parameterSorting, typeSorting);
-        FilterDefinition<MediaEntity> filter = GetFilterDefinition(country, year);
+        SortDefinition<MediaEntity> sortDefinition =
+            GetSortDefinition(mediaFilter.ParameterSorting, mediaFilter.TypeSorting);
+
+        FilterDefinition<MediaEntity> filter = GetFilterDefinition(mediaFilter.Countries, mediaFilter.MatchAllCountries,
+            mediaFilter.Genres, mediaFilter.MatchAllGenres, mediaFilter.Years);
 
         var medias = await dbContext.Media
             .Find(filter)
             .Sort(sortDefinition)
-            .Skip(skip)
-            .Limit(take)
+            .Skip(mediaFilter.Skip)
+            .Limit(mediaFilter.Take)
             .ToListAsync(cancellationToken);
 
         return mapper.Map<IEnumerable<Media>>(medias);
@@ -30,9 +36,9 @@ public class GetMediaStorage(MovieHubDbContext dbContext,IMapper mapper) : IGetM
         {
             ParameterSorting.Alphabetically => new ExpressionFieldDefinition<MediaEntity, object>(
                 m => m.Title),
-            ParameterSorting.ReleaseDate => new ExpressionFieldDefinition<MediaEntity, object>(m => 
+            ParameterSorting.ReleaseDate => new ExpressionFieldDefinition<MediaEntity, object>(m =>
                 m.ReleasedAt),
-            ParameterSorting.PublicationDate => new ExpressionFieldDefinition<MediaEntity, object>(m=>
+            ParameterSorting.PublicationDate => new ExpressionFieldDefinition<MediaEntity, object>(m =>
                 m.PublishedAt),
             _ => throw new ArgumentOutOfRangeException(nameof(parameterSorting), parameterSorting, null)
         };
@@ -47,22 +53,41 @@ public class GetMediaStorage(MovieHubDbContext dbContext,IMapper mapper) : IGetM
         return sortDefinition;
     }
 
-    private FilterDefinition<MediaEntity> GetFilterDefinition(string? country, int? year)
+    private FilterDefinition<MediaEntity> GetFilterDefinition(
+        IEnumerable<string> countries,
+        bool matchAllCountries,
+        IEnumerable<string> genres,
+        bool matchAllGenres,
+        IEnumerable<int> years)
     {
-        List<FilterDefinition<MediaEntity>> filters = new List<FilterDefinition<MediaEntity>>(2);
+        List<FilterDefinition<MediaEntity>> filters = new List<FilterDefinition<MediaEntity>>();
 
-        if (country != null)
-            filters.Add(new ExpressionFilterDefinition<MediaEntity>(m => m.Country == country));
+        if (countries.Any())
+        {
+            var countryFilter = matchAllCountries
+                ? Builders<MediaEntity>.Filter.All(m => m.Countries, countries)
+                : Builders<MediaEntity>.Filter.AnyIn(m => m.Countries, countries);
 
-        if (year != null)
-            filters.Add(new ExpressionFilterDefinition<MediaEntity>(m =>
-                    m.ReleasedAt >= new DateOnly(year.Value, 1, 1) && m.ReleasedAt<=new DateOnly(year.Value,12,31)));
+            filters.Add(countryFilter);
+        }
 
-        FilterDefinition<MediaEntity> filter = FilterDefinition<MediaEntity>.Empty;
+        if (genres.Any())
+        {
+            var genreFilter = matchAllGenres
+                ? Builders<MediaEntity>.Filter.All(m => m.Genres, genres)
+                : Builders<MediaEntity>.Filter.AnyIn(m => m.Genres, genres);
 
-        if (filters.Count > 0)
-            filter = new FilterDefinitionBuilder<MediaEntity>().And(filters);
+            filters.Add(genreFilter);
+        }
 
-        return filter;
+        if (years.Any())
+        {
+            var yearFilter = Builders<MediaEntity>.Filter.In(m => m.ReleasedYearAt, years);
+            filters.Add(yearFilter);
+        }
+
+        return filters.Any()
+            ? Builders<MediaEntity>.Filter.And(filters)
+            : Builders<MediaEntity>.Filter.Empty;
     }
 }

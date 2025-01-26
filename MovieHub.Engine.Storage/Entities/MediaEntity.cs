@@ -12,8 +12,9 @@ public abstract class MediaEntity
     [MaxLength(100)] public string Title { get; set; } = "";
     [MaxLength(1000)] public string Description { get; set; } = "";
     public DateOnly ReleasedAt { get; set; }
+    public int ReleasedYearAt { get; set; }
     public DateTimeOffset PublishedAt { get; set; }
-    public string Country { get; set; } = "";
-    public IEnumerable<string> Genre { get; set; } = null!;
+    public IEnumerable<string> Countries { get; set; } = null!;
+    public IEnumerable<string> Genres { get; set; } = null!;
     public IEnumerable<string> Director { get; set; } = null!;
 }

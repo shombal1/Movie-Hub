@@ -1,4 +1,5 @@
 ﻿using Mapster;
+using MovieHub.Engine.Api.Enums;
 using MovieHub.Engine.Api.Models.Responses;
 using MovieHub.Engine.Domain.Models;
 
@@ -14,8 +15,8 @@ public class MediaRegistry : IRegister
             .Map(dest => dest.Description, src => src.Description)
             .Map(dest => dest.ReleasedAt, src => src.ReleasedAt)
             .Map(dest => dest.PublishedAt, src => src.PublishedAt)
-            .Map(dest => dest.Country, src => src.Country)
-            .Map(dest => dest.Genre, src => src.Genre)
+            .Map(dest => dest.Countries, src => src.Countries)
+            .Map(dest => dest.Genre, src => src.Genres)
             .Map(dest => dest.Director, src => src.Director)
             .Include<Movie,MovieDto>()
             .Include<Series,SeriesDto>();
