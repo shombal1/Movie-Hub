@@ -24,7 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\MovieHub.Engine.Storage\MovieHub.Engine.Storage.csproj" />
+      <ProjectReference Include="..\MovieHub.Engine.Storage\MovieHub.Engine.Storage.csproj" />
     </ItemGroup>
 
 </Project>
