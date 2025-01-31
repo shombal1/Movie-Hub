@@ -3,6 +3,7 @@ using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using MovieHub.Engine.Domain;
 using MovieHub.Engine.Domain.UseCases.GetMedia;
+using MovieHub.Engine.Domain.UseCases.TryAddMovieToBasket;
 using MovieHub.Engine.Storage.Entities;
 using MovieHub.Engine.Storage.Storages;
 
@@ -24,8 +25,10 @@ public static class ServiceCollectionExtension
         services.AddScoped<MovieHubDbContext>();
         
         services.AddScoped<IGetMediaStorage,GetMediaStorage>();
+        services.AddScoped<ITryAddMediaToBasketStorage, TryAddMediaToBasketStorage>();
         
         services.AddSingleton<IUnitOfWork, UnitOfWork>();
+        services.AddSingleton<IGuidFactory, GuidFactory>();
 
         services.AddStorageMapster();
         
