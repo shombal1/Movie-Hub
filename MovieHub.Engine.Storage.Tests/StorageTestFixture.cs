@@ -16,9 +16,9 @@ public class StorageTestFixture : IAsyncLifetime
     {
         return new MovieHubDbContext(new OptionsWrapper<MongoDbConfigure>(new MongoDbConfigure()
         {
-            NameDataBase = "MovieHub",
+            NameDataBase = "test",
             NameMediaCollection = "Media",
-            NameMovieBasketCollection = "MovieBasket",
+            NameMediaBasketCollection = "MediaBasket",
             NameUserCollection = "Users"
         }), new MongoClient(_mongoDbContainer.GetConnectionString()));
     }
@@ -39,6 +39,25 @@ public class StorageTestFixture : IAsyncLifetime
     public virtual async Task InitializeAsync()
     {
         await _mongoDbContainer.StartAsync();
+        
+        string initializationScript =
+            """
+            db.createCollection("Users");
+            db.Users.createIndex({_id: 1});
+
+            db.createCollection("Media");
+            db.Media.createIndex({_id: 1});
+            db.Media.createIndex({releasedYearAt: 1});
+            db.Media.createIndex({genres: 1}); 
+            db.Media.createIndex({countries: 1}); 
+
+            db.createCollection("MediaBasket");
+            db.MediaBasket.createIndex({UserId: 1});
+            db.MediaBasket.createIndex({UserId: 1, MovieId: 1},{ unique: true } );
+
+            """;
+        
+        await _mongoDbContainer.ExecScriptAsync(initializationScript);
     }
 
     public virtual async Task DisposeAsync()
