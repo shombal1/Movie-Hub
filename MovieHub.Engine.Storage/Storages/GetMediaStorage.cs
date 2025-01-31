@@ -1,6 +1,8 @@
-﻿using MapsterMapper;
+﻿using Mapster;
+using MapsterMapper;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using MovieHub.Engine.Domain.Models;
 using MovieHub.Engine.Domain.UseCases.GetMedia;
 using MovieHub.Engine.Storage.Entities;
@@ -28,6 +30,14 @@ public class GetMediaStorage(MovieHubDbContext dbContext, IMapper mapper, ILogge
             .ToListAsync(cancellationToken);
 
         return mapper.Map<IEnumerable<Media>>(medias);
+    }
+
+    public async Task<Media?> Get(Guid id, CancellationToken cancellationToken)
+    {
+        return await dbContext.Media.AsQueryable()
+            .Where(m => m.Id == id)
+            .ProjectToType<Media>(mapper.Config)
+            .FirstOrDefaultAsync(cancellationToken);
     }
 
     private SortDefinition<MediaEntity> GetSortDefinition(ParameterSorting parameterSorting, TypeSorting typeSorting)
