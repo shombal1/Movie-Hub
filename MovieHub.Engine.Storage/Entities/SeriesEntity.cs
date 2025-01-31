@@ -3,9 +3,12 @@
 namespace MovieHub.Engine.Storage.Entities;
 
 
-[BsonDiscriminator("SeriesEntity")]
-public class SeriesEntity: MediaEntity
+[BsonDiscriminator("series")]
+public class SeriesEntity : MediaEntity
 {
+    [BsonElement("countSeasons")]
     public int CountSeasons { get; set; }
+
+    [BsonElement("countEpisodes")]
     public int CountEpisodes { get; set; }
 }

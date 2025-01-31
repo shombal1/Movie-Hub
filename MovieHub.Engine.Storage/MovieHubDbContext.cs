@@ -10,7 +10,7 @@ public class MovieHubDbContext : IAsyncDisposable
 {
     private IMongoDatabase Database { get; }
     
-    public IMongoCollection<MovieBasketEntity> MovieBaskets { get; }
+    public IMongoCollection<MediaBasketEntity> MovieBaskets { get; }
     public IMongoCollection<MediaEntity> Media { get; }
     public IMongoCollection<UserEntity> Users { get; }
 
@@ -24,7 +24,7 @@ public class MovieHubDbContext : IAsyncDisposable
 
         CurrentSession = mongoClient.StartSession();
         
-        MovieBaskets = Database.GetCollection<MovieBasketEntity>(configure.NameMovieBasketCollection);
+        MovieBaskets = Database.GetCollection<MediaBasketEntity>(configure.NameMediaBasketCollection);
         Media = Database.GetCollection<MediaEntity>(configure.NameMediaCollection);
         Users = Database.GetCollection<UserEntity>(configure.NameUserCollection);
     }
