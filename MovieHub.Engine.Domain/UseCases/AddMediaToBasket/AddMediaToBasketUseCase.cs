@@ -2,18 +2,17 @@
 using MediatR;
 using MovieHub.Engine.Domain.Authentication;
 using MovieHub.Engine.Domain.Exceptions;
-using MovieHub.Engine.Domain.Models;
 using MovieHub.Engine.Domain.UseCases.GetMedia;
 
-namespace MovieHub.Engine.Domain.UseCases.TryAddMovieToBasket;
+namespace MovieHub.Engine.Domain.UseCases.AddMediaToBasket;
 
-public class TryAddMediaToBasketUseCase(
-    IValidator<TryAddMediaToBasketCommand> validator,
+public class AddMediaToBasketUseCase(
+    IValidator<AddMediaToBasketCommand> validator,
     IGetMediaStorage getMediaStorage,
     ITryAddMediaToBasketStorage tryAddMediaToBasketStorage,
-    IIdentityProvider identityProvider) : IRequestHandler<TryAddMediaToBasketCommand, Unit>
+    IIdentityProvider identityProvider) : IRequestHandler<AddMediaToBasketCommand, Unit>
 {
-    public async Task<Unit> Handle(TryAddMediaToBasketCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(AddMediaToBasketCommand request, CancellationToken cancellationToken)
     {
         await validator.ValidateAndThrowAsync(request, cancellationToken);
         

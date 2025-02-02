@@ -10,6 +10,7 @@ db.Media.createIndex({countries: 1});
 sh.shardCollection("MovieHub.Media", {_id: "hashed"});
 
 db.createCollection("MediaBasket");
-db.MediaBasket.createIndex({UserId: 1});
-db.MediaBasket.createIndex({UserId: 1, MovieId: 1},{ unique: true } );
-sh.shardCollection("MovieHub.MediaBasket", {UserId: "hashed"});
+db.MediaBasket.createIndex({userId: 1});
+db.MediaBasket.createIndex({mediaId: 1});
+db.MediaBasket.createIndex({userId: 1, mediaId: 1}, { unique: true });
+sh.shardCollection("MovieHub.MediaBasket", {userId: "hashed"});

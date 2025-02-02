@@ -16,4 +16,6 @@ public class MediaBasketEntity
     [BsonGuidRepresentation(GuidRepresentation.Standard)]
     [BsonElement("mediaId")]
     public Guid MediaId { get; set; }
+    
+    public DateTimeOffset AddedAt { get; set; }
 }

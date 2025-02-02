@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using MovieHub.Engine.Storage.Entities;
 
@@ -10,7 +9,7 @@ public class MovieHubDbContext : IAsyncDisposable
 {
     private IMongoDatabase Database { get; }
     
-    public IMongoCollection<MediaBasketEntity> MovieBaskets { get; }
+    public IMongoCollection<MediaBasketEntity> MediaBasket { get; }
     public IMongoCollection<MediaEntity> Media { get; }
     public IMongoCollection<UserEntity> Users { get; }
 
@@ -24,13 +23,14 @@ public class MovieHubDbContext : IAsyncDisposable
 
         CurrentSession = mongoClient.StartSession();
         
-        MovieBaskets = Database.GetCollection<MediaBasketEntity>(configure.NameMediaBasketCollection);
+        MediaBasket = Database.GetCollection<MediaBasketEntity>(configure.NameMediaBasketCollection);
         Media = Database.GetCollection<MediaEntity>(configure.NameMediaCollection);
         Users = Database.GetCollection<UserEntity>(configure.NameUserCollection);
     }
 
-    public async ValueTask DisposeAsync()
+    public ValueTask DisposeAsync()
     {
         CurrentSession.Dispose();
+        return ValueTask.CompletedTask;
     }
 }

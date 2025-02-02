@@ -52,8 +52,8 @@ public class StorageTestFixture : IAsyncLifetime
             db.Media.createIndex({countries: 1}); 
 
             db.createCollection("MediaBasket");
-            db.MediaBasket.createIndex({UserId: 1});
-            db.MediaBasket.createIndex({UserId: 1, MovieId: 1},{ unique: true } );
+            db.MediaBasket.createIndex({userId: 1});
+            db.MediaBasket.createIndex({userId: 1, mediaId: 1},{ unique: true } );
 
             """;
         

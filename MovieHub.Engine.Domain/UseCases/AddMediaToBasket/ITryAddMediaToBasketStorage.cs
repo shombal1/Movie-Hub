@@ -1,4 +1,4 @@
-﻿namespace MovieHub.Engine.Domain.UseCases.TryAddMovieToBasket;
+﻿namespace MovieHub.Engine.Domain.UseCases.AddMediaToBasket;
 
 public interface ITryAddMediaToBasketStorage : IStorage
 {
