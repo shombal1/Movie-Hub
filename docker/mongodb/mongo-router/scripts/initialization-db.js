@@ -1,4 +1,6 @@
-﻿db.createCollection("Users");
+﻿db = db.getSiblingDB('MovieHub');
+
+db.createCollection("Users");
 db.Users.createIndex({_id: 1});
 sh.shardCollection("MovieHub.Users", {_id: "hashed"});
 

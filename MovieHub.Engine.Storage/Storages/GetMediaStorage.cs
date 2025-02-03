@@ -1,8 +1,6 @@
-﻿using Mapster;
-using MapsterMapper;
+﻿using MapsterMapper;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
-using MongoDB.Driver.Linq;
 using MovieHub.Engine.Domain.Models;
 using MovieHub.Engine.Domain.UseCases.GetMedia;
 using MovieHub.Engine.Storage.Entities;
@@ -23,7 +21,7 @@ public class GetMediaStorage(MovieHubDbContext dbContext, IMapper mapper, ILogge
             mediaFilter.Genres, mediaFilter.MatchAllGenres, mediaFilter.Years);
 
         var medias = await dbContext.Media
-            .Find(filter)
+            .Find(dbContext.CurrentSession,filter)
             .Sort(sortDefinition)
             .Skip(mediaFilter.Skip)
             .Limit(mediaFilter.Take)
@@ -33,11 +31,10 @@ public class GetMediaStorage(MovieHubDbContext dbContext, IMapper mapper, ILogge
     }
 
     public async Task<Media?> Get(Guid id, CancellationToken cancellationToken)
-    {
-        return await dbContext.Media.AsQueryable()
-            .Where(m => m.Id == id)
-            .ProjectToType<Media>(mapper.Config)
-            .FirstOrDefaultAsync(cancellationToken);
+    { 
+        return mapper.Map<IEnumerable<Media>>(await dbContext.Media.Find(
+                dbContext.CurrentSession,Builders<MediaEntity>.Filter.Where(m => m.Id == id))
+            .ToListAsync(cancellationToken)).FirstOrDefault();
     }
 
     private SortDefinition<MediaEntity> GetSortDefinition(ParameterSorting parameterSorting, TypeSorting typeSorting)

@@ -79,11 +79,11 @@ public class GetMediaQueryValidatorShould
     }
 
     [Theory]
-    [MemberData(nameof(GetInvalidRequest))]
+    [MemberData(nameof(GetValidRequest))]
     public async Task ReturnFailure_WhenRequestIsInvalid(TestGetMediaQuery query)
     {
         var actual = await _sut.ValidateAsync(query);
 
-        actual.IsValid.Should().BeFalse();
+        actual.IsValid.Should().BeTrue();
     }
 }

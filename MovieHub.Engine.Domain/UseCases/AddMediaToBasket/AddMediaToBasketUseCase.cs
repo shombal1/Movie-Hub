@@ -23,7 +23,7 @@ public class AddMediaToBasketUseCase(
         
         var isMediaExists = await tryAddMediaToBasketStorage.TryAdd(currentUserId, request.MediaId, cancellationToken);
 
-        if (isMediaExists)
+        if (!isMediaExists)
             throw new MediaAlreadyInBasketException(request.MediaId);
 
         return Unit.Value;
