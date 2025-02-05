@@ -10,11 +10,11 @@ using TypeSorting = MovieHub.Engine.Api.Enums.TypeSorting;
 namespace MovieHub.Engine.Api.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/v1/media")]
 public class MediaController : ControllerBase
 {
     [HttpGet]
-    [Route("v1/media/{page}")]
+    [Route("{page}")]
     public async Task<IActionResult> GetMedia(
         [FromServices] IMediator mediator,
         [FromServices] IMapper mapper,

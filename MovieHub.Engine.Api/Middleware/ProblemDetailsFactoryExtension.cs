@@ -35,6 +35,7 @@ public static class ProblemDetailsFactoryExtension
             domainException.ErrorCode switch
             {
                 ErrorCode.Gone => StatusCodes.Status410Gone,
+                ErrorCode.Conflict => StatusCodes.Status409Conflict,
                 _ => throw new ArgumentOutOfRangeException()
             },
             "Error",
