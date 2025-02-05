@@ -5,6 +5,7 @@ using MovieHub.Engine.Domain;
 using MovieHub.Engine.Domain.UseCases.AddMediaToBasket;
 using MovieHub.Engine.Domain.UseCases.GetMedia;
 using MovieHub.Engine.Domain.UseCases.GetMediaFromBasket;
+using MovieHub.Engine.Domain.UseCases.RemoveMediaFromBasket;
 using MovieHub.Engine.Storage.Entities;
 using MovieHub.Engine.Storage.Storages;
 
@@ -28,6 +29,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<IGetMediaStorage,GetMediaStorage>();
         services.AddScoped<ITryAddMediaToBasketStorage, TryAddMediaToBasketStorage>();
         services.AddScoped<IGetMediaFromBasketStorage,GetMediaFromBasketStorage>();
+        services.AddScoped<IRemoveMediaFromBasketStorage, RemoveMediaFromBasketStorage>();
         
         services.AddSingleton<IUnitOfWork, UnitOfWork>();
         services.AddSingleton<IGuidFactory, GuidFactory>();
