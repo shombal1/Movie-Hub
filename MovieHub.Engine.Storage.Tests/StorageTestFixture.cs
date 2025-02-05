@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using DotNet.Testcontainers.Builders;
 using Mapster;
 using MapsterMapper;
 using Microsoft.Extensions.Options;
@@ -10,7 +11,14 @@ namespace MovieHub.Engine.Storage.Tests;
 
 public class StorageTestFixture : IAsyncLifetime
 {
-    private readonly MongoDbContainer _mongoDbContainer = new MongoDbBuilder().Build();
+    private readonly MongoDbContainer _mongoDbContainer = new MongoDbBuilder()
+        .WithUsername("")
+        .WithPassword("")
+        .WithExtraHost("host.docker.internal", "host-gateway")
+        .WithCommand("--replSet", "rs0")
+        .WithWaitStrategy(Wait.ForUnixContainer())
+        .Build();
+
 
     public MovieHubDbContext GetMovieHubDbContext()
     {
@@ -39,6 +47,8 @@ public class StorageTestFixture : IAsyncLifetime
     public virtual async Task InitializeAsync()
     {
         await _mongoDbContainer.StartAsync();
+        
+        await _mongoDbContainer.ExecScriptAsync($"rs.initiate({{_id:'rs0',members:[{{_id:0,host:'host.docker.internal:{_mongoDbContainer.GetMappedPublicPort(27017)}'}}]}})");
         
         string initializationScript =
             """
