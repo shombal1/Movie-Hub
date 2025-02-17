@@ -8,12 +8,16 @@ using MovieHub.Engine.Domain.UseCases.GetMediaFromBasket;
 using MovieHub.Engine.Domain.UseCases.RemoveMediaFromBasket;
 using MovieHub.Engine.Storage.Entities;
 using MovieHub.Engine.Storage.Storages;
+using StackExchange.Redis;
 
 namespace MovieHub.Engine.Storage.DependencyInjection;
 
 public static class ServiceCollectionExtension
 {
-    public static IServiceCollection AddStorage(this IServiceCollection services, string contextConnectionString)
+    public static IServiceCollection AddStorage(
+        this IServiceCollection services, 
+        string contextConnectionString,
+        string cashConnectionString)
     {
         BsonClassMap.RegisterClassMap<MediaEntity>(cm =>
         {
@@ -25,6 +29,14 @@ public static class ServiceCollectionExtension
         
         services.AddSingleton<IMongoClient>(_ => new MongoClient(contextConnectionString));
         services.AddScoped<MovieHubDbContext>();
+        
+        services.AddSingleton<IConnectionMultiplexer>(
+            ConnectionMultiplexer.Connect(cashConnectionString));
+        services.AddScoped<IDatabase>(sp =>
+        {
+            var multiplexer = sp.GetRequiredService<IConnectionMultiplexer>();
+            return multiplexer.GetDatabase();
+        });
         
         services.AddScoped<IGetMediaStorage,GetMediaStorage>();
         services.AddScoped<ITryAddMediaToBasketStorage, TryAddMediaToBasketStorage>();

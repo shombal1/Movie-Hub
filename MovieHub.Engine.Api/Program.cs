@@ -15,9 +15,12 @@ ConfigurationManager configuration = builder.Configuration;
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddDomain();
 builder.Services.Configure<MongoDbConfigure>(builder.Configuration.GetSection("MongoDbConfigure").Bind);
-builder.Services.AddStorage(configuration.GetConnectionString("MovieHubMongoDb")!);
+builder.Services.AddStorage(
+    configuration.GetConnectionString("MovieHubMongoDb")!,
+    configuration.GetConnectionString("Redis")!);
+
+builder.Services.AddDomain();
 
 
 builder.Services.AddKeycloakWebApiAuthentication(

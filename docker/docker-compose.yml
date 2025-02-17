@@ -5,6 +5,7 @@
 volumes:
   movie-hub-postgres-keycloak:
   movie-hub-opensearch:
+  movie-hub-redis:
 
 
 services:
@@ -135,6 +136,14 @@ services:
     environment:
       OPENSEARCH_HOSTS: '["http://movie-hub-opensearch:9200"]'
       DISABLE_SECURITY_DASHBOARDS_PLUGIN: 'true'
+      
+  redis:
+    image: "redis:latest"
+    container_name: 'movie-hub-redis'
+    ports:
+      - '6379:6379'
+    volumes:
+      - movie-hub-redis:/data
   
   
   

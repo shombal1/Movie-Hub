@@ -9,6 +9,7 @@
     <ItemGroup>
       <PackageReference Include="Mapster" Version="7.4.2-pre02" />
       <PackageReference Include="MongoDB.Driver" Version="3.1.0" />
+      <PackageReference Include="StackExchange.Redis" Version="2.8.24" />
     </ItemGroup>
 
     <ItemGroup>
