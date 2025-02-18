@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using MovieHub.Engine.Api.Models.Requests;
 using MovieHub.Engine.Api.Models.Responses;
 using MovieHub.Engine.Domain.UseCases.GetMedia;
+using MovieHub.Engine.Domain.UseCases.IncrementMediaViews;
 using ParameterSorting = MovieHub.Engine.Api.Enums.ParameterSorting;
 using TypeSorting = MovieHub.Engine.Api.Enums.TypeSorting;
 
@@ -43,4 +44,14 @@ public class MediaController : ControllerBase
 
         return Ok(mapper.Map<IEnumerable<MediaDto>>(result));
     }
+
+    [HttpPost]
+    [Route("{mediaId}/views/increment")]
+    public async Task<IActionResult> IncrementViews(Guid mediaId,[FromServices] IMediator mediator)
+    {
+        await mediator.Send(new IncrementMediaViewsCommand(mediaId));
+
+        return NoContent();
+    }
+    
 }

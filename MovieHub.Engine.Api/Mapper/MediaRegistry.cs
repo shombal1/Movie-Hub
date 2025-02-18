@@ -18,6 +18,7 @@ public class MediaRegistry : IRegister
             .Map(dest => dest.Countries, src => src.Countries)
             .Map(dest => dest.Genre, src => src.Genres)
             .Map(dest => dest.Director, src => src.Director)
+            .Map(dest => dest.Views, src => src.Views)
             .Include<Movie,MovieDto>()
             .Include<Series,SeriesDto>();
 

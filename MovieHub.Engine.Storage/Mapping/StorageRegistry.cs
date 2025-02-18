@@ -17,6 +17,7 @@ public class StorageRegistry : IRegister
             .Map(dest => dest.Countries, src => src.Countries)
             .Map(dest => dest.Genres, src => src.Genres)
             .Map(dest => dest.Director, src => src.Director)
+            .Map(dest=>dest.Views,src =>src.Views)
             .Include<MovieEntity,Movie>()
             .Include<SeriesEntity,Series>();
 

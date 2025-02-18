@@ -35,4 +35,7 @@ public abstract class MediaEntity
 
     [BsonElement("director")]
     public IEnumerable<string> Director { get; set; } = null!;
+    
+    [BsonElement("views")]
+    public long Views { get; set; }
 }

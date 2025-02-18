@@ -11,6 +11,7 @@ public class MediaDto
     public string Description { get; set; } = "";
     public DateOnly ReleasedAt { get; set; }
     public DateTimeOffset PublishedAt { get; set; }
+    public long Views { get; set; }
     public IEnumerable<string> Countries { get; set; } = null!;
     public IEnumerable<string> Genre { get; set; } = null!;
     public IEnumerable<string> Director { get; set; } = null!;
