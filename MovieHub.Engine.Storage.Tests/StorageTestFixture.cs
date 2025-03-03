@@ -1,11 +1,12 @@
 ﻿using System.Reflection;
-using DotNet.Testcontainers.Builders;
 using Mapster;
 using MapsterMapper;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using MovieHub.Engine.Storage.Mapping;
+using StackExchange.Redis;
 using Testcontainers.MongoDb;
+using Testcontainers.Redis;
 
 namespace MovieHub.Engine.Storage.Tests;
 
@@ -16,6 +17,7 @@ public class StorageTestFixture : IAsyncLifetime
         .WithPassword("")
         .Build();
 
+    private readonly RedisContainer _redisContainer = new RedisBuilder().Build();
 
     public MovieHubDbContext GetMovieHubDbContext()
     {
@@ -26,6 +28,11 @@ public class StorageTestFixture : IAsyncLifetime
             NameMediaBasketCollection = "MediaBasket",
             NameUserCollection = "Users"
         }), new MongoClient(_mongoDbContainer.GetConnectionString()));
+    }
+
+    public IDatabase GetRedisDataBase()
+    {
+        return ConnectionMultiplexer.Connect(_redisContainer.GetConnectionString()).GetDatabase(1);
     }
 
     public IMapper GetMapper()
@@ -42,11 +49,12 @@ public class StorageTestFixture : IAsyncLifetime
     }
 
     public virtual async Task InitializeAsync()
-    {
-        await _mongoDbContainer.StartAsync();
-        
-        await _mongoDbContainer.ExecScriptAsync($"rs.initiate({{_id:'rs0',members:[{{_id:0,host:'host.docker.internal:{_mongoDbContainer.GetMappedPublicPort(27017)}'}}]}})");
-        
+    { 
+        Task.WaitAll(
+         _mongoDbContainer.StartAsync(),
+           
+            _redisContainer.StartAsync());
+
         string initializationScript =
             """
             db.createCollection("Users");
@@ -60,15 +68,17 @@ public class StorageTestFixture : IAsyncLifetime
 
             db.createCollection("MediaBasket");
             db.MediaBasket.createIndex({userId: 1});
-            db.MediaBasket.createIndex({userId: 1, mediaId: 1},{ unique: true } );
+            db.MediaBasket.createIndex({mediaId: 1});
+            db.MediaBasket.createIndex({userId: 1, mediaId: 1}, { unique: true });
 
             """;
-        
+
         await _mongoDbContainer.ExecScriptAsync(initializationScript);
     }
 
     public virtual async Task DisposeAsync()
     {
         await _mongoDbContainer.DisposeAsync();
+        await _redisContainer.DisposeAsync();
     }
 }

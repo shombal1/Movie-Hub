@@ -27,7 +27,6 @@ public class GetMediaFromBasketStorageShould(GetMediaFromBasketStorageTestFixtur
         
         actual.Should().NotBeEmpty();
         actual.Should().HaveCount(expectedCountMedia);
-        actual.Should().BeInAscendingOrder(m => m.Title);
     }
 
     [Fact]

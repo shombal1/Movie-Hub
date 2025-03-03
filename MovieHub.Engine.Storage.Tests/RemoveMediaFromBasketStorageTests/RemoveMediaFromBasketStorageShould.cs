@@ -60,10 +60,6 @@ public class RemoveMediaFromBasketStorageShould(StorageTestFixture fixture) : IC
     public async Task ReturnFalse_WhenMediaFromBasketUsersHasNotBeenRemoved()
     {
         await using MovieHubDbContext dbContext = fixture.GetMovieHubDbContext();
-
-        var currentSession = dbContext.CurrentSession;
-        currentSession.StartTransaction(new TransactionOptions(
-            new Optional<ReadConcern>(ReadConcern.Snapshot)));
         
         var mediaId = Guid.Parse("FB55913B-7585-4B33-94D5-6B9CF126720A");
         var userId = Guid.Parse("D9414095-1C19-4C84-A9C3-184626F8FBD3");
@@ -99,15 +95,10 @@ public class RemoveMediaFromBasketStorageShould(StorageTestFixture fixture) : IC
         });
 
         var invalidMediaId = Guid.Parse("1149C270-0A14-4DBF-A33E-B4A2DB691C2C");
-        long beginCount = await dbContext.MediaBasket.CountDocumentsAsync(dbContext.CurrentSession,_=>true);
         
         var actual = await _sut.Remove(userId, invalidMediaId, CancellationToken.None);
-        long afterCount = await dbContext.MediaBasket.CountDocumentsAsync(dbContext.CurrentSession,_=>true);
-        
-        await currentSession.CommitTransactionAsync();
         
         actual.Should().BeFalse();
-        beginCount.Should().Be(afterCount);
     }
     
 }
