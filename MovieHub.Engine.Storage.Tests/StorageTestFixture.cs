@@ -14,9 +14,6 @@ public class StorageTestFixture : IAsyncLifetime
     private readonly MongoDbContainer _mongoDbContainer = new MongoDbBuilder()
         .WithUsername("")
         .WithPassword("")
-        .WithExtraHost("host.docker.internal", "host-gateway")
-        .WithCommand("--replSet", "rs0")
-        .WithWaitStrategy(Wait.ForUnixContainer())
         .Build();
 
 
