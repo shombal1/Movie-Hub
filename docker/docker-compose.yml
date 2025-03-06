@@ -32,11 +32,8 @@ services:
       [
         'start-dev',
         '-Dkeycloak.profile.feature.upload_scripts=enabled',
-        '--import-realm',
         '--log-console-color=true'
       ]
-#    volumes:
-#      - ./keycloak/configuration/:/opt/keycloak/data/import/
     environment:
       KC_DB: 'postgres'
       KC_DB_URL_HOST: 'movie-hub-postgres-keycloak'
@@ -49,7 +46,6 @@ services:
       KAFKA_CLIENT_ID: keycloak
       KAFKA_EVENTS: REGISTER
       KAFKA_BOOTSTRAP_SERVERS: movie-hub-kafka-broker:29092
-      KEYCLOAK_IMPORT: ./keycloak/configuration/movie-hub-realm-export.json
     depends_on:
       - postgres-keycloak
   
