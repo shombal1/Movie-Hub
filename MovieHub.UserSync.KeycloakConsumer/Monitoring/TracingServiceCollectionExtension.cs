@@ -1,4 +1,5 @@
-﻿using OpenTelemetry.Resources;
+﻿using OpenTelemetry.Exporter;
+using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
 namespace MovieHub.UserSync.KeycloakConsumer.Monitoring;
@@ -11,8 +12,11 @@ public static class TracingServiceCollectionExtension
             .WithTracing(builder => builder
                 .ConfigureResource(conf => conf.AddService("MovieHub.UserSync.KeycloakConsumer"))
                 .AddSource(Metrics.ApplicationName)
-                .AddJaegerExporter(conf =>
-                    conf.Endpoint = new Uri(configuration.GetConnectionString("Tracing")!)));
+                .AddOtlpExporter(conf =>
+                {
+                    conf.Endpoint = new Uri(configuration.GetConnectionString("Tracing")!);
+                    conf.Protocol = OtlpExportProtocol.HttpProtobuf;
+                }));
 
         return services;
     }
