@@ -11,11 +11,11 @@ using TypeSorting = MovieHub.Engine.Api.Enums.TypeSorting;
 namespace MovieHub.Engine.Api.Controllers;
 
 [ApiController]
-[Route("api/v1/media")]
+[Route("api")]
 public class MediaController : ControllerBase
 {
     [HttpGet]
-    [Route("{page}")]
+    [Route("v2/media{page}")]
     public async Task<IActionResult> GetMedia(
         [FromServices] IMediator mediator,
         [FromServices] IMapper mapper,
@@ -46,7 +46,7 @@ public class MediaController : ControllerBase
     }
 
     [HttpPost]
-    [Route("{mediaId}/views/increment")]
+    [Route("v1/media/{mediaId}/views/increment")]
     public async Task<IActionResult> IncrementViews(Guid mediaId,[FromServices] IMediator mediator)
     {
         await mediator.Send(new IncrementMediaViewsCommand(mediaId));

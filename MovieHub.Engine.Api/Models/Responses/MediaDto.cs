@@ -2,8 +2,8 @@
 
 namespace MovieHub.Engine.Api.Models.Responses;
 
-[JsonDerivedType(typeof(MovieDto))] 
-[JsonDerivedType(typeof(SeriesDto))]
+[JsonDerivedType(typeof(MovieDto),"movie")] 
+[JsonDerivedType(typeof(SeriesDto),"series")]
 public class MediaDto
 {
     public Guid Id { get; set; }
@@ -14,6 +14,5 @@ public class MediaDto
     public long Views { get; set; }
     public IEnumerable<string> Countries { get; set; } = null!;
     public IEnumerable<string> Genre { get; set; } = null!;
-    public IEnumerable<string> Director { get; set; } = null!;
-    public virtual string Type { get; } = null!;
+    public IEnumerable<string> Directors { get; set; } = null!;
 }
