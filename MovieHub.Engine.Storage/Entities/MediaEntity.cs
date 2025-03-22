@@ -4,10 +4,11 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace MovieHub.Engine.Storage.Entities;
 
+[BsonDiscriminator(RootClass = true)]
+[BsonKnownTypes(typeof(SeriesEntity), typeof(MovieEntity))]
 public abstract class MediaEntity
 {
     [BsonId]
-    [BsonGuidRepresentation(GuidRepresentation.Standard)]
     public Guid Id { get; set; }
 
     [MaxLength(100)]

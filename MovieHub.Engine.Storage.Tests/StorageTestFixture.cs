@@ -1,6 +1,9 @@
 ﻿using System.Reflection;
 using AutoMapper;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using MovieHub.Engine.Storage.Mapping;
 using StackExchange.Redis;
@@ -40,6 +43,11 @@ public class StorageTestFixture : IAsyncLifetime
             new MapperConfiguration(v => v.AddMaps(Assembly.GetAssembly(typeof(MediaProfile)))));
     }
 
+    static StorageTestFixture()
+    {
+        BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
+    }
+    
     public virtual async Task InitializeAsync()
     { 
         Task.WaitAll(

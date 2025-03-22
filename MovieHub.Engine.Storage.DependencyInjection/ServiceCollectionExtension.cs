@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using MovieHub.Engine.Domain;
 using MovieHub.Engine.Domain.Jobs.SyncMediaViews;
@@ -22,13 +24,8 @@ public static class ServiceCollectionExtension
         string contextConnectionString,
         string cashConnectionString)
     {
-        BsonClassMap.RegisterClassMap<MediaEntity>(cm =>
-        {
-            cm.AutoMap();
-            cm.SetIsRootClass(true);
-        });
-        BsonClassMap.RegisterClassMap<MovieEntity>(m => m.AutoMap());
-        BsonClassMap.RegisterClassMap<SeriesEntity>(m => m.AutoMap());
+        BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
+        
         
         services.AddSingleton<IMongoClient>(_ => new MongoClient(contextConnectionString));
         services.AddScoped<MovieHubDbContext>();
