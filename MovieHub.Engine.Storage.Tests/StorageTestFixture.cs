@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
-using Mapster;
-using MapsterMapper;
+using AutoMapper;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using MovieHub.Engine.Storage.Mapping;
@@ -37,22 +36,14 @@ public class StorageTestFixture : IAsyncLifetime
 
     public IMapper GetMapper()
     {
-        var typeAdapterConfig = new TypeAdapterConfig
-        {
-            AllowImplicitSourceInheritance = true,
-            AllowImplicitDestinationInheritance = true
-        };
-        Assembly applicationAssembly = Assembly.GetAssembly(typeof(StorageRegistry))!;
-        typeAdapterConfig.Scan(applicationAssembly);
-
-        return new Mapper(typeAdapterConfig);
+        return new Mapper(
+            new MapperConfiguration(v => v.AddMaps(Assembly.GetAssembly(typeof(MediaProfile)))));
     }
 
     public virtual async Task InitializeAsync()
     { 
         Task.WaitAll(
          _mongoDbContainer.StartAsync(),
-           
             _redisContainer.StartAsync());
 
         string initializationScript =

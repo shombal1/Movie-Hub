@@ -1,4 +1,4 @@
-﻿using MapsterMapper;
+﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using MovieHub.Engine.Domain.Models;

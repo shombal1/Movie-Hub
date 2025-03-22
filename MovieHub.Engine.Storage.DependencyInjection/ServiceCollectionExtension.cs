@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using MovieHub.Engine.Domain;
@@ -8,7 +9,7 @@ using MovieHub.Engine.Domain.UseCases.GetMedia;
 using MovieHub.Engine.Domain.UseCases.GetMediaFromBasket;
 using MovieHub.Engine.Domain.UseCases.IncrementMediaViews;
 using MovieHub.Engine.Domain.UseCases.RemoveMediaFromBasket;
-using MovieHub.Engine.Storage.Entities;
+using MovieHub.Engine.Storage.Mapping;
 using MovieHub.Engine.Storage.Storages;
 using StackExchange.Redis;
 
@@ -52,7 +53,7 @@ public static class ServiceCollectionExtension
         services.AddSingleton<IUnitOfWork, UnitOfWork>();
         services.AddSingleton<IGuidFactory, GuidFactory>();
 
-        services.AddStorageMapster();
+        services.AddAutoMapper(conf => conf.AddMaps(Assembly.GetAssembly(typeof(MediaProfile))));
         
         return services;
     }

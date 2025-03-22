@@ -1,8 +1,9 @@
+using System.Reflection;
 using Keycloak.AuthServices.Authentication;
 using Keycloak.AuthServices.Authorization;
 using Keycloak.AuthServices.Common;
 using MovieHub.Engine.Api;
-using MovieHub.Engine.Api.Extension;
+using MovieHub.Engine.Api.Mapper;
 using MovieHub.Engine.Api.Middleware;
 using MovieHub.Engine.Domain.DependencyInjection;
 using MovieHub.Engine.Storage;
@@ -40,7 +41,7 @@ builder.Services.AddKeycloakAuthorization(options =>
 
 builder.Services.AddSwaggerGenWithAuth(configuration);
 
-builder.Services.AddApiMapster();
+builder.Services.AddAutoMapper(conf=>conf.AddMaps(Assembly.GetAssembly(typeof(MediaProfile))));
 
 var app = builder.Build();
 

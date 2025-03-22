@@ -1,4 +1,5 @@
-﻿using MapsterMapper;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using MovieHub.Engine.Domain.Models;
@@ -20,8 +21,9 @@ public class GetMediaFromBasketStorage(MovieHubDbContext dbContext, IMapper mapp
                 (b, m) => m)
             .Skip(skip)
             .Take(take)
+            .ProjectTo<Media>(mapper.ConfigurationProvider)
             .ToListAsync(cancellationToken);
 
-        return mapper.Map<IEnumerable<Media>>(media);
+        return media;
     }
 }
