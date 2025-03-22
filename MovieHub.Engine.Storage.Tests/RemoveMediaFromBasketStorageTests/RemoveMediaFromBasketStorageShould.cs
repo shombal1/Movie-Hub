@@ -29,7 +29,7 @@ public class RemoveMediaFromBasketStorageShould(StorageTestFixture fixture) : IC
             PublishedAt = new DateTimeOffset(new DateTime(2019, 5, 29, 18, 0, 0, DateTimeKind.Utc)),
             Countries = ["South Korea"],
             Genres = ["Thriller", "Drama"],
-            Director = ["Bong Joon-ho"],
+            Directors = ["Bong Joon-ho"],
             Quality = "4K"
         };
 
@@ -74,7 +74,7 @@ public class RemoveMediaFromBasketStorageShould(StorageTestFixture fixture) : IC
             PublishedAt = new DateTimeOffset(new DateTime(2019, 5, 29, 18, 0, 0, DateTimeKind.Utc)),
             Countries = ["South Korea"],
             Genres = ["Thriller", "Drama"],
-            Director = ["Bong Joon-ho"],
+            Directors = ["Bong Joon-ho"],
             Quality = "4K"
         };
 
