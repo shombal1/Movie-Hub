@@ -9,6 +9,7 @@ using MovieHub.Engine.Domain.Jobs.SyncMediaViews;
 using MovieHub.Engine.Domain.UseCases.AddMediaToBasket;
 using MovieHub.Engine.Domain.UseCases.GetMedia;
 using MovieHub.Engine.Domain.UseCases.GetMediaFromBasket;
+using MovieHub.Engine.Domain.UseCases.GetMediaFullInfo;
 using MovieHub.Engine.Domain.UseCases.IncrementMediaViews;
 using MovieHub.Engine.Domain.UseCases.RemoveMediaFromBasket;
 using MovieHub.Engine.Storage.Mapping;
@@ -46,6 +47,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<IIncrementMediaViewsStorage,IncrementMediaViewsStorage>();
         services.AddScoped<IPushMediaViewsStorage, PushMediaViewsStorage>();
         services.AddScoped<IPopMediaViewsStorage, PopMediaViewsStorage>();
+        services.AddScoped<IGetMediaFullInfoStorage, GetMediaFullInfoStorage>();
         
         services.AddSingleton<IUnitOfWork, UnitOfWork>();
         services.AddSingleton<IGuidFactory, GuidFactory>();
