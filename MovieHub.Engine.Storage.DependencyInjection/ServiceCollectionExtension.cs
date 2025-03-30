@@ -49,6 +49,8 @@ public static class ServiceCollectionExtension
         services.AddScoped<IPopMediaViewsStorage, PopMediaViewsStorage>();
         services.AddScoped<IGetMediaFullInfoStorage, GetMediaFullInfoStorage>();
         
+        services.AddScoped<ISeedGenerator, SeedGenerator>();
+        
         services.AddSingleton<IUnitOfWork, UnitOfWork>();
         services.AddSingleton<IGuidFactory, GuidFactory>();
 
