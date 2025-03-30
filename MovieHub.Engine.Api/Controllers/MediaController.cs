@@ -3,7 +3,9 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using MovieHub.Engine.Api.Models.Requests;
 using MovieHub.Engine.Api.Models.Responses;
+using MovieHub.Engine.Domain.Models;
 using MovieHub.Engine.Domain.UseCases.GetMedia;
+using MovieHub.Engine.Domain.UseCases.GetMediaFullInfo;
 using MovieHub.Engine.Domain.UseCases.IncrementMediaViews;
 using ParameterSorting = MovieHub.Engine.Api.Enums.ParameterSorting;
 using TypeSorting = MovieHub.Engine.Api.Enums.TypeSorting;
@@ -35,14 +37,26 @@ public class MediaController : ControllerBase
                 TypeSorting.Ascending => Domain.UseCases.GetMedia.TypeSorting.Ascending,
                 TypeSorting.Descending => Domain.UseCases.GetMedia.TypeSorting.Descending,
                 _ => throw new ArgumentOutOfRangeException()
-            }, 
-            getMediaDto.Countries, getMediaDto.MatchAllCountries, 
+            },
+            getMediaDto.Countries, getMediaDto.MatchAllCountries,
             getMediaDto.Genres, getMediaDto.MatchAllGenres,
             getMediaDto.Years);
 
         var result = await mediator.Send(query, cancellationToken);
 
         return Ok(mapper.Map<IEnumerable<MediaDto>>(result));
+    }
+
+    [HttpGet]
+    [Route("v1/media/{mediaId}/full-info")]
+    public async Task<IActionResult> GetMediaFullInfo(
+        [FromRoute] Guid mediaId, 
+        [FromServices] IMapper mapper,
+        [FromServices] IMediator mediator)
+    {
+        MediaFullInfo mediaFullInfo = await mediator.Send(new GetMediaFullInfoQuery(mediaId));
+        
+        return Ok(mapper.Map<MediaFullInfoDto>(mediaFullInfo));
     }
 
     [HttpPost]
