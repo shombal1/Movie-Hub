@@ -47,11 +47,12 @@ public class MediaController : ControllerBase
 
     [HttpPost]
     [Route("v1/media/{mediaId}/views/increment")]
-    public async Task<IActionResult> IncrementViews(Guid mediaId,[FromServices] IMediator mediator)
+    public async Task<IActionResult> IncrementViews(
+        [FromRoute] Guid mediaId,
+        [FromServices] IMediator mediator)
     {
         await mediator.Send(new IncrementMediaViewsCommand(mediaId));
 
         return NoContent();
     }
-    
 }
