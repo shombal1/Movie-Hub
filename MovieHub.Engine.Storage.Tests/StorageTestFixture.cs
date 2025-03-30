@@ -28,8 +28,10 @@ public class StorageTestFixture : IAsyncLifetime
             NameDataBase = "test",
             NameMediaCollection = "Media",
             NameMediaBasketCollection = "MediaBasket",
-            NameUserCollection = "Users"
-        }), new MongoClient(_mongoDbContainer.GetConnectionString()));
+            NameUserCollection = "Users",
+            NameSeasonCollection = "Seasons",
+            NameAdditionMediaInfoCollection = "AdditionMediaInfo",
+        }), new MongoClient( _mongoDbContainer.GetConnectionString()));
     }
 
     public IDatabase GetRedisDataBase()
@@ -70,6 +72,11 @@ public class StorageTestFixture : IAsyncLifetime
             db.MediaBasket.createIndex({mediaId: 1});
             db.MediaBasket.createIndex({userId: 1, mediaId: 1}, { unique: true });
 
+            db.createCollection("Seasons");
+            db.Seasons.createIndex({seriesId: 1});
+            
+            db.createCollection("AdditionMediaInfo");
+            db.AdditionMediaInfo.createIndex({mediaId: 1});
             """;
 
         await _mongoDbContainer.ExecScriptAsync(initializationScript);
