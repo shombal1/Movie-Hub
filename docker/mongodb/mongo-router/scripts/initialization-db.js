@@ -16,3 +16,11 @@ db.MediaBasket.createIndex({userId: 1});
 db.MediaBasket.createIndex({mediaId: 1});
 db.MediaBasket.createIndex({userId: 1, mediaId: 1}, { unique: true });
 sh.shardCollection("MovieHub.MediaBasket", {userId: "hashed"});
+
+db.createCollection("Seasons");
+db.Seasons.createIndex({seriesId: 1});
+sh.shardCollection("MovieHub.Seasons", {seriesId: "hashed"});
+
+db.createCollection("AdditionMediaInfo");
+db.AdditionMediaInfo.createIndex({mediaId: 1});
+sh.shardCollection("MovieHub.AdditionMediaInfo", {mediaId: "hashed"});

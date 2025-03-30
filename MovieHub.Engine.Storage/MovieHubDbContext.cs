@@ -12,6 +12,8 @@ public class MovieHubDbContext : IAsyncDisposable
     public IMongoCollection<MediaBasketEntity> MediaBasket { get; }
     public IMongoCollection<MediaEntity> Media { get; }
     public IMongoCollection<UserEntity> Users { get; }
+    public IMongoCollection<SeasonEntity> Seasons { get; }
+    public IMongoCollection<AdditionMediaInfoEntity> AdditionMediaInfo { get; }
 
     public IClientSessionHandle CurrentSession { get; }
 
@@ -26,6 +28,8 @@ public class MovieHubDbContext : IAsyncDisposable
         MediaBasket = Database.GetCollection<MediaBasketEntity>(configure.NameMediaBasketCollection);
         Media = Database.GetCollection<MediaEntity>(configure.NameMediaCollection);
         Users = Database.GetCollection<UserEntity>(configure.NameUserCollection);
+        Seasons = Database.GetCollection<SeasonEntity>(configure.NameSeasonCollection);
+        AdditionMediaInfo = Database.GetCollection<AdditionMediaInfoEntity>(configure.NameAdditionMediaInfoCollection);
     }
 
     public ValueTask DisposeAsync()

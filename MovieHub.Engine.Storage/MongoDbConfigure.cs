@@ -7,4 +7,6 @@ public class MongoDbConfigure
     public string NameMediaCollection { get; set; }
     public string NameMediaBasketCollection { get; set; }
     public string NameUserCollection { get; set; }
+    public string NameSeasonCollection { get; set; }
+    public string NameAdditionMediaInfoCollection { get; set; }
 }
