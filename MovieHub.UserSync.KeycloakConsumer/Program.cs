@@ -19,6 +19,8 @@ builder.Services.AddSingleton<MongoDbContext>();
 
 builder.Services.Configure<ConsumerConfig>(configuration
     .GetSection("Kafka").Bind);
+builder.Services.Configure<KafkaTopic>(configuration
+    .GetSection("KafkaTopic").Bind);
 builder.Services.AddSingleton(sp => new ConsumerBuilder<byte[], byte[]>(
     sp.GetRequiredService<IOptions<ConsumerConfig>>().Value).Build());
 builder.Services.AddSingleton<ICreateUserStorage, CreateUserStorage>();
