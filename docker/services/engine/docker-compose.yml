@@ -1,0 +1,24 @@
+﻿networks:
+  default:
+    name: ${COMPOSE_PROJECT_NETWORK}
+
+services:
+  moviehub-api:
+    build:
+      context: ../../../
+      dockerfile: docker/services/engine/Dockerfile
+    image: 'movie-hub-engine-api:local'
+    container_name:  ${COMPOSE_PROJECT_NAME}-engine-api
+    ports:
+      - "9090:8080"
+      - "4024:4024"
+    labels:
+      com.jetbrains.rider.debug.enable: "true"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "http://+:8080"
+      Keycloak__auth-server-url: "http://host.docker.internal:8080/"
+      ConnectionStrings__MovieHubMongoDb: "mongodb://host.docker.internal:${MONGO_ROUTER_PORT}"
+      ConnectionStrings__Redis : "${REDIS}:${REDIS_PORT},abortConnect=false"
+      DOTNET_USE_POLLING_FILE_WATCHER: true
+      Keycloak__credentials__secret: ${KEYCLOAK__CREDENTIALS__SECRET}

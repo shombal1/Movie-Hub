@@ -1,0 +1,198 @@
+﻿networks:
+  default:
+    name: ${COMPOSE_PROJECT_NETWORK}
+    #external: true
+
+services:
+  configsvr1:
+    container_name: ${COMPOSE_PROJECT_NAME}-mongo-configsvr1
+    image: mongo:latest
+    command: mongod --configsvr --replSet config_rs --dbpath /data/db --port 27017
+    ports:
+      - 10001:27017
+    volumes:
+      - configsvr1:/data/db
+
+  configsvr2:
+    container_name: ${COMPOSE_PROJECT_NAME}-mongo-configsvr2
+    image: mongo:latest
+    command: mongod --configsvr --replSet config_rs --dbpath /data/db --port 27017
+    ports:
+      - 10002:27017
+    volumes:
+      - configsvr2:/data/db
+
+  configsvr3:
+    container_name: ${COMPOSE_PROJECT_NAME}-mongo-configsvr3
+    image: mongo:latest
+    command: mongod --configsvr --replSet config_rs --dbpath /data/db --port 27017
+    ports:
+      - 10003:27017
+    volumes:
+      - configsvr3:/data/db
+  
+  shardsvr1-1:
+    container_name: ${COMPOSE_PROJECT_NAME}-mongo-shardsvr1-1
+    image: mongo:latest
+    command: mongod --shardsvr --replSet shard1_rs --dbpath /data/db --port 27017
+    ports:
+      - 20001:27017
+    volumes:
+      - shardsvr1-1:/data/db
+
+  shardsvr1-2:
+    container_name: ${COMPOSE_PROJECT_NAME}-mongo-shardsvr1-2
+    image: mongo:latest
+    command: mongod --shardsvr --replSet shard1_rs --dbpath /data/db --port 27017
+    ports:
+      - 20002:27017
+    volumes:
+      - shardsvr1-2:/data/db
+
+  shardsvr1-3:
+    container_name: ${COMPOSE_PROJECT_NAME}-mongo-shardsvr1-3
+    image: mongo:latest
+    command: mongod --shardsvr --replSet shard1_rs --dbpath /data/db --port 27017
+    ports:
+      - 20003:27017
+    volumes:
+      - shardsvr1-3:/data/db
+  
+  shardsvr2-1:
+    container_name: ${COMPOSE_PROJECT_NAME}-mongo-shardsvr2-1
+    image: mongo:latest
+    command: mongod --shardsvr --replSet shard2_rs --dbpath /data/db --port 27017
+    ports:
+      - 21001:27017
+    volumes:
+      - shardsvr2-1:/data/db
+
+  shardsvr2-2:
+    container_name: ${COMPOSE_PROJECT_NAME}-mongo-shardsvr2-2
+    image: mongo:latest
+    command: mongod --shardsvr --replSet shard2_rs --dbpath /data/db --port 27017
+    ports:
+      - 21002:27017
+    volumes:
+      - shardsvr2-2:/data/db
+
+  shardsvr2-3:
+    container_name: ${COMPOSE_PROJECT_NAME}-mongo-shardsvr2-3
+    image: mongo:latest
+    command: mongod --shardsvr --replSet shard2_rs --dbpath /data/db --port 27017
+    ports:
+      - 21003:27017
+    volumes:
+      - shardsvr2-3:/data/db
+  
+  mongo-router:
+    container_name: ${MONGO_ROUTER_CONTAINER}
+    image: mongo:latest
+    command: mongos --configdb config_rs/${COMPOSE_PROJECT_NAME}-mongo-configsvr1:27017,${COMPOSE_PROJECT_NAME}-mongo-configsvr2:27017,${COMPOSE_PROJECT_NAME}-mongo-configsvr3:27017 --port 27017 --bind_ip_all
+    ports:
+      - ${MONGO_ROUTER_PORT}:27017
+    depends_on:
+      - configsvr1
+      - configsvr2
+      - configsvr3
+
+  mongo-express:
+    container_name: ${COMPOSE_PROJECT_NAME}-mongo-express
+    image: mongo-express:latest
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_URL: "mongodb://${MONGO_ROUTER_CONTAINER}:27017"
+      ME_CONFIG_OPTIONS_EDITORTHEME: "ambiance"
+      ME_CONFIG_BASICAUTH_USERNAME: "admin"
+      ME_CONFIG_BASICAUTH_PASSWORD: 'admin'
+    depends_on:
+      - mongo-router
+  
+  init-mongo:
+    container_name: ${COMPOSE_PROJECT_NAME}-mongo-init
+    image: mongo:latest
+    volumes:
+      - ./init-configsvr.js:/scripts/init-configsvr.js:ro
+      - ./init-router.js:/scripts/init-router.js:ro
+      - ./init-shard-1.js:/scripts/init-shard-1.js:ro
+      - ./init-shard-2.js:/scripts/init-shard-2.js:ro
+      - ./init-db.js:/scripts/init-db.js:ro
+    command: >
+      bash -c "
+      check_mongo_ready() {
+        host=$$1
+        until mongosh \"$$host\" --eval \"db.adminCommand('ping')\" >/dev/null 2>&1; do
+          echo \"Waiting for $$host to be ready...\"
+          sleep 1
+        done
+      }
+
+      wait_for_primary() {
+        host=$$1
+        rs=$$2
+        echo \"Waiting for primary in replica set $$rs on $$host...\"
+        until mongosh \"$$host\" --eval \"
+          if (rs.status().ok) {
+            const primary = rs.status().members.find(m => m.stateStr === 'PRIMARY')
+            if (primary) quit(0)
+            quit(1)
+          } else {
+            quit(1)
+          }
+        \" >/dev/null 2>&1; do
+          echo \"Still waiting for primary in $$rs...\"
+          sleep 2
+        done
+        echo \"Primary elected in $$rs\"
+      }
+
+      echo 'Checking ${COMPOSE_PROJECT_NAME}-mongo-configsvr1 readiness...' &&
+      check_mongo_ready ${COMPOSE_PROJECT_NAME}-mongo-configsvr1:27017 &&
+      echo 'Init config server...' &&
+      mongosh ${COMPOSE_PROJECT_NAME}-mongo-configsvr1:27017 /scripts/init-configsvr.js &&
+
+      echo 'Checking ${COMPOSE_PROJECT_NAME}-mongo-shardsvr1-1 readiness...' &&
+      check_mongo_ready ${COMPOSE_PROJECT_NAME}-mongo-shardsvr1-1:27017 &&
+      echo 'Init shard 1...' &&
+      mongosh ${COMPOSE_PROJECT_NAME}-mongo-shardsvr1-1:27017 /scripts/init-shard-1.js &&
+
+      echo 'Checking ${COMPOSE_PROJECT_NAME}-mongo-shardsvr2-1 readiness...' &&
+      check_mongo_ready ${COMPOSE_PROJECT_NAME}-mongo-shardsvr2-1:27017 &&
+      echo 'Init shard 2...' &&
+      mongosh ${COMPOSE_PROJECT_NAME}-mongo-shardsvr2-1:27017 /scripts/init-shard-2.js &&
+
+      echo 'Checking mongo-router readiness...' &&
+      check_mongo_ready mongo-router:27017 &&
+      wait_for_primary ${COMPOSE_PROJECT_NAME}-mongo-shardsvr1-1:27017 shard1_rs &&
+      wait_for_primary ${COMPOSE_PROJECT_NAME}-mongo-shardsvr2-1:27017 shard2_rs  &&
+      echo 'Init ${MONGO_ROUTER_CONTAINER}...' &&
+      mongosh ${MONGO_ROUTER_CONTAINER}:27017 /scripts/init-router.js &&
+      echo 'Init db...' &&
+      mongosh ${MONGO_ROUTER_CONTAINER}:27017 /scripts/init-db.js &&
+
+      echo 'Mongo init finished!' 
+      exit 0
+      "
+    depends_on:
+      - configsvr1
+      - configsvr2
+      - configsvr3
+      - shardsvr1-1
+      - shardsvr1-2
+      - shardsvr1-3
+      - shardsvr2-1
+      - shardsvr2-2
+      - shardsvr2-3
+      - mongo-router
+
+volumes:
+  configsvr1:
+  configsvr2:
+  configsvr3:
+  shardsvr1-1:
+  shardsvr1-2:
+  shardsvr1-3:
+  shardsvr2-1:
+  shardsvr2-2:
+  shardsvr2-3:

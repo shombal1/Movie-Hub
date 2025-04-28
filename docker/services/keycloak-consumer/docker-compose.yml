@@ -1,0 +1,26 @@
+﻿networks:
+  default:
+    name: ${COMPOSE_PROJECT_NETWORK}
+
+services:
+  keycloak-consumer:
+    build:
+      context: ../../../
+      dockerfile: docker/services/keycloak-consumer/Dockerfile
+    image: 'movie-hub-keycloak-consumer:local'
+    container_name: ${COMPOSE_PROJECT_NAME}-keycloak-consumer
+    ports:
+      - "9190:8080"
+    labels:
+      com.jetbrains.rider.debug.enable: "true"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "http://+:8080"
+      MongoDbConfigure__ConnectionString: "host.docker.internal:${MONGO_ROUTER_PORT}"
+      Logs__ConnectionString: "http://host.docker.internal:9200"
+      Logs__Username: "admin"
+      Logs__Password: "${OPENSEARCH_ADMIN_PASSWORD}"
+      ConnectionStrings__Tracing: "http://host.docker.internal:4318/v1/traces"
+      Kafka__BootstrapServers: "${KAFKA_BROKER_CONTAINER}:29092"
+      KafkaTopic__Name: "${KEYCLOAK_KAFKA_TOPIC}"
+      DOTNET_USE_POLLING_FILE_WATCHER: true

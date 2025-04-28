@@ -1,83 +1,114 @@
 ﻿networks:
   default:
-    name: "movie-hub"
-
-volumes:
-  movie-hub-postgres-keycloak:
-  movie-hub-opensearch:
-  movie-hub-redis:
+    name: ${COMPOSE_PROJECT_NETWORK}
+    #external: true
 
 
 services:
   postgres-keycloak:
     image: 'postgres:17.0'
-    container_name: 'movie-hub-postgres-keycloak'
+    container_name: ${COMPOSE_PROJECT_NAME}-postgres-keycloak
     ports:
       - '5432:5432'
     volumes:
-      - movie-hub-postgres-keycloak:/var/lib/postgresql/data
+      - postgres-keycloak:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_KEYCLOAK_USER_PASSWORD}
       POSTGRES_USER: ${POSTGRES_KEYCLOAK_USER}
       POSTGRES_DB: ${POSTGRES_KEYCLOAK_DB}
   
   keycloak:
-    image: 'my-keycloak-kafka:new-local'
+    image: 'my-keycloak-kafka:new-local-2'
     build:
       context: ./keycloak/
-    container_name: 'movie-hub-keycloak'
+    container_name: ${COMPOSE_PROJECT_NAME}-keycloak
     ports:
       - "8080:8080"
-    command:
-      [
-        'start-dev',
-        '-Dkeycloak.profile.feature.upload_scripts=enabled',
-        '--log-console-color=true'
-      ]
+    command: [
+      "start-dev",
+      "-Dkeycloak.profile.feature.upload_scripts=enabled",
+      "--log-console-color=true",
+    ]
     environment:
-      KC_DB: 'postgres'
-      KC_DB_URL_HOST: 'movie-hub-postgres-keycloak'
+      KC_DB: postgres
+      KC_DB_URL_HOST: ${COMPOSE_PROJECT_NAME}-postgres-keycloak
       KC_DB_URL_DATABASE: ${POSTGRES_KEYCLOAK_DB}
       KC_DB_USERNAME: ${POSTGRES_KEYCLOAK_USER}
       KC_DB_PASSWORD: ${POSTGRES_KEYCLOAK_USER_PASSWORD}
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_USER}
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_USER_PASSWORD}
-      KAFKA_TOPIC: movie-hub.keycloak-events
+      KAFKA_TOPIC: ${KEYCLOAK_KAFKA_TOPIC}
       KAFKA_CLIENT_ID: keycloak
       KAFKA_EVENTS: REGISTER
-      KAFKA_BOOTSTRAP_SERVERS: movie-hub-kafka-broker:29092
+      KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BROKER_CONTAINER}:29092
     depends_on:
       - postgres-keycloak
   
   zookeeper:
     image: 'confluentinc/cp-zookeeper:7.6.0'
-    container_name: 'movie-hub-zookeeper'
+    container_name:  ${COMPOSE_PROJECT_NAME}-zookeeper
     ports:
       - "2181:2181"
+    volumes:
+      - zookeeper:/var/lib/zookeeper/data
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    healthcheck:
+      test: [ "CMD-SHELL", "zkServer.sh status" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
   
   kafka-broker:
     image: 'confluentinc/cp-kafka:7.6.0'
-    container_name: 'movie-hub-kafka-broker'
+    container_name: ${KAFKA_BROKER_CONTAINER}
     depends_on:
       - zookeeper
     ports:
-      - "9092:9092"
+      - "${KAFKA_BROKER_PORT}:9092"
       - "9101:9101"
+    volumes:
+      - kafka:/var/lib/kafka/data
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_ZOOKEEPER_CONNECT:  ${COMPOSE_PROJECT_NAME}-zookeeper:2181
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://movie-hub-kafka-broker:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://${KAFKA_BROKER_CONTAINER}:29092,PLAINTEXT_HOST://localhost:9092
+    healthcheck:
+      test: [ "CMD-SHELL", "kafka-broker-api-versions --bootstrap-server localhost:9092" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    
   
+  kafka-init:
+    image: confluentinc/cp-kafka:7.6.0
+    depends_on:
+      kafka-broker:
+        condition: service_healthy
+    container_name:  ${COMPOSE_PROJECT_NAME}-kafka-init
+    command: >
+      bash -c "
+        echo 'Waiting for Kafka to be ready...';
+        until kafka-topics --bootstrap-server ${KAFKA_BROKER_CONTAINER}:29092 --list; do
+          sleep 5;
+        done;
+      kafka-topics --bootstrap-server ${KAFKA_BROKER_CONTAINER}:29092 \
+      --create \
+      --topic ${KEYCLOAK_KAFKA_TOPIC} \
+      --partitions 1 \
+      --replication-factor 1 \
+      --config retention.ms=604800000 \
+      --if-not-exists
+        echo 'Topic initialized successfully'
+      "
   
   kafka-ui:
-    container_name: 'movie-hub-kafka-ui'
+    container_name:  ${COMPOSE_PROJECT_NAME}-kafka-ui
     image: 'provectuslabs/kafka-ui:latest'
     ports:
       - 8082:8080
@@ -86,14 +117,14 @@ services:
       - keycloak
     environment:
       KAFKA_CLUSTERS_0_NAME: local
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-broker:29092
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: ${KAFKA_BROKER_CONTAINER}:29092
       KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: keycloak-events-outbox
       KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://movie-hub-kafka-connect:8083
-      
-      
+  
+  
   jaeger:
     image: 'jaegertracing/all-in-one'
-    container_name: 'movie-hub-jaeger'
+    container_name:  ${COMPOSE_PROJECT_NAME}-jaeger
     environment:
       COLLECTOR_ZIPKIN_HOST_PORT: 9411
       COLLECTOR_OTLP_ENABLED: true
@@ -108,41 +139,46 @@ services:
       - '14268:14268'
       - '14269:14269'
       - '9411:9411'
-    
-  opensearch: 
+  
+  opensearch:
     image: 'opensearchproject/opensearch:latest'
-    container_name: 'movie-hub-opensearch'
+    container_name:  ${COMPOSE_PROJECT_NAME}-opensearch
     environment:
       discovery.type: 'single-node'
-      OPENSEARCH_INITIAL_ADMIN_PASSWORD: 'Vq5ZerK6j9'
+      OPENSEARCH_INITIAL_ADMIN_PASSWORD: ${OPENSEARCH_ADMIN_PASSWORD}
       plugins.security.disabled: 'true'
     volumes:
-      - movie-hub-opensearch:/usr/share/opensearch/data
+      - opensearch:/usr/share/opensearch/data
     ports:
       - 9200:9200
       - 9600:9600
-    
+  
   opensearch-dashboards:
     image: 'opensearchproject/opensearch-dashboards:latest'
-    container_name: 'movie-hub-opensearch-dashboards'
+    container_name:  ${COMPOSE_PROJECT_NAME}-opensearch-dashboards
     ports:
       - '5601:5601'
     expose:
       - "5601"
     environment:
-      OPENSEARCH_HOSTS: '["http://movie-hub-opensearch:9200"]'
+      OPENSEARCH_HOSTS: '["http://${COMPOSE_PROJECT_NAME}-opensearch:9200"]'
       DISABLE_SECURITY_DASHBOARDS_PLUGIN: 'true'
-      
+  
   redis:
     image: "redis:latest"
-    container_name: 'movie-hub-redis'
+    container_name: ${REDIS}
     ports:
-      - '6379:6379'
+      - ${REDIS_PORT}:6379
     volumes:
-      - movie-hub-redis:/data
-  
-  
-  
+      - redis:/data
+
+volumes:
+  postgres-keycloak:
+  opensearch:
+  redis:
+  kafka:
+  zookeeper:
+
 #  api:
 #    build:
 #      context: ./..
