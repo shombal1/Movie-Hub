@@ -22,9 +22,10 @@ namespace MovieHub.Engine.Storage.DependencyInjection;
 public static class ServiceCollectionExtension
 {
     public static IServiceCollection AddStorage(
-        this IServiceCollection services, 
+        this IServiceCollection services,
         string contextConnectionString,
-        string cashConnectionString)
+        string cashConnectionString,
+        string s3StorageConnectionString)
     {
         BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
         
@@ -72,6 +73,7 @@ public static class ServiceCollectionExtension
 
             return client;
         });
+        services.AddSingleton<IS3FileUploadService, S3FileUploadService>();
 
         services.AddAutoMapper(conf => conf.AddMaps(Assembly.GetAssembly(typeof(MediaProfile))));
         

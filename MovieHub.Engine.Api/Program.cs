@@ -17,9 +17,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.Configure<MongoDbConfigure>(builder.Configuration.GetSection("MongoDbConfigure").Bind);
+builder.Services.Configure<S3Settings>(builder.Configuration.GetSection("S3Settings").Bind);
+
 builder.Services.AddStorage(
     configuration.GetConnectionString("MovieHubMongoDb")!,
     configuration.GetConnectionString("Redis")!);
+    configuration.GetConnectionString("Redis")!,
+    configuration.GetConnectionString("S3Storage")!);
 
 builder.Services.AddDomain();
 

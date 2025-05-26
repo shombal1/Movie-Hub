@@ -1,4 +1,6 @@
 ﻿using System.Reflection;
+using Amazon.Runtime;
+using Amazon.S3;
 using AutoMapper;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
@@ -21,6 +23,8 @@ public class StorageTestFixture : IAsyncLifetime
 
     private readonly RedisContainer _redisContainer = new RedisBuilder().Build();
 
+    private Lazy<Task> _lazyMinioContainerStart;
+
     public MovieHubDbContext GetMovieHubDbContext()
     {
         return new MovieHubDbContext(new OptionsWrapper<MongoDbConfigure>(new MongoDbConfigure()
@@ -39,6 +43,26 @@ public class StorageTestFixture : IAsyncLifetime
         return ConnectionMultiplexer.Connect(_redisContainer.GetConnectionString()).GetDatabase(1);
     }
 
+    public async Task<IAmazonS3> GetAmazonS3()
+    {
+        await _lazyMinioContainerStart.Value;
+
+        var config = new AmazonS3Config
+        {
+            ServiceURL = _minioContainer.GetConnectionString(),
+            ForcePathStyle = true,
+            UseHttp = true,
+        };
+
+        var s3Client = new AmazonS3Client(
+            new BasicAWSCredentials(
+                _minioContainer.GetAccessKey(),
+                _minioContainer.GetSecretKey()),
+            config);
+
+        return s3Client;
+    }
+
     public IMapper GetMapper()
     {
         return new Mapper(
@@ -55,6 +79,8 @@ public class StorageTestFixture : IAsyncLifetime
         Task.WaitAll(
          _mongoDbContainer.StartAsync(),
             _redisContainer.StartAsync());
+        _lazyMinioContainerStart =
+            new Lazy<Task>(() => _minioContainer.StartAsync(), LazyThreadSafetyMode.ExecutionAndPublication);
 
         string initializationScript =
             """
@@ -86,5 +112,6 @@ public class StorageTestFixture : IAsyncLifetime
     {
         await _mongoDbContainer.DisposeAsync();
         await _redisContainer.DisposeAsync();
+        await _minioContainer.DisposeAsync();
     }
 }
