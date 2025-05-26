@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Amazon.S3;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
@@ -53,6 +54,24 @@ public static class ServiceCollectionExtension
         
         services.AddSingleton<IUnitOfWork, UnitOfWork>();
         services.AddSingleton<IGuidFactory, GuidFactory>();
+        services.AddSingleton<TimeProvider>(factory => TimeProvider.System);
+        services.AddSingleton<IAmazonS3>(sp =>
+        {
+            var config = new AmazonS3Config
+            {
+                ServiceURL = s3StorageConnectionString.Split(';').First(x => x.StartsWith("Endpoint=")).Replace("Endpoint=", ""),
+                ForcePathStyle = true,
+                UseHttp = true
+            };
+
+            var client = new AmazonS3Client(
+                s3StorageConnectionString.Split(';').First(x => x.StartsWith("AccessKey=")).Replace("AccessKey=", ""),
+                s3StorageConnectionString.Split(';').First(x => x.StartsWith("SecretKey=")).Replace("SecretKey=", ""),
+                config
+            );
+
+            return client;
+        });
 
         services.AddAutoMapper(conf => conf.AddMaps(Assembly.GetAssembly(typeof(MediaProfile))));
         
