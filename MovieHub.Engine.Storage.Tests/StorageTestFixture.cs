@@ -73,9 +73,9 @@ public class StorageTestFixture : IAsyncLifetime
 
     static StorageTestFixture()
     {
-        BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
+        GlobalMongoSetting.Configure();
     }
-    
+
     public virtual async Task InitializeAsync()
     { 
         Task.WaitAll(
