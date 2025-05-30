@@ -31,4 +31,8 @@
       <ProjectReference Include="..\MovieHub.Engine.Storage.DependencyInjection\MovieHub.Engine.Storage.DependencyInjection.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Controllers\TestController.cs" />
+    </ItemGroup>
+
 </Project>
