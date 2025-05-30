@@ -10,5 +10,7 @@ public static class GlobalMongoSetting
     public static void Configure()
     {
         BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
+        
+        BsonSerializer.RegisterSerializer(new EnumSerializer<QualityType>(BsonType.String));
     }
 }

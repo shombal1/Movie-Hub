@@ -28,3 +28,7 @@ sh.shardCollection("MovieHub.AdditionMediaInfo", {mediaId: "hashed"});
 db.createCollection("DomainEvents");
 db.DomainEvents.createIndex({_id: 1});
 sh.shardCollection("MovieHub.DomainEvents", {_id: "hashed"});
+
+db.createCollection("MovieRequests");
+db.MovieRequests.createIndex({_id: 1});
+sh.shardCollection("MovieHub.MovieRequests", {_id: "hashed"});
