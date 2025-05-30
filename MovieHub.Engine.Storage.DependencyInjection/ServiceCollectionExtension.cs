@@ -5,6 +5,7 @@ using MongoDB.Driver;
 using MovieHub.Engine.Domain;
 using MovieHub.Engine.Domain.Jobs.SyncMediaViews;
 using MovieHub.Engine.Domain.UseCases;
+using MovieHub.Engine.Domain.UseCases.AddMedia.FinalizeMovieAddition;
 using MovieHub.Engine.Domain.UseCases.AddMedia.FinalizeMovieUpload;
 using MovieHub.Engine.Domain.UseCases.AddMedia.GetMoviePartUploadUrl;
 using MovieHub.Engine.Domain.UseCases.AddMedia.InitiateMovieAddition;
@@ -56,6 +57,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<IInitiateMovieAdditionStorage, InitiateMovieAdditionStorage>();
         services.AddScoped<IStartMovieUploadStorage, StartMovieUploadStorage>();
         services.AddScoped<IGetMovieRequestStorage, GetMovieRequestStorage>();
+        services.AddScoped<IFinalizeMovieAdditionStorage, FinalizeMovieAdditionStorage>();
         services.AddScoped<ISetUrlKeyMovieRequestStorage, SetUrlKeyMovieRequestStorage>();
         services.AddScoped<IFinalizeMovieUploadStorage, FinalizeMovieUploadStorage>();
         services.AddScoped<IGetMoviePartUploadUrlStorage, GetMoviePartUploadUrlStorage>();
