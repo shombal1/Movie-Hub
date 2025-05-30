@@ -29,5 +29,10 @@ public class MediaProfile : Profile
             .ForMember(dest => dest.CountSeasons, opt => opt.MapFrom(src => src.CountSeasons))
             .ForMember(dest => dest.CountEpisodes, opt => opt.MapFrom(src => src.CountEpisodes))
             .IncludeBase<MediaEntity, Media>();
+
+        CreateMap<MovieRequestEntity, MovieRequest>()
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
+
+        CreateMap<Models.ProcessingStatus,ProcessingStatus>();
     }
 }

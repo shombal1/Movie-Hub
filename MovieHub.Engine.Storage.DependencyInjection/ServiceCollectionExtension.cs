@@ -6,6 +6,7 @@ using MovieHub.Engine.Domain;
 using MovieHub.Engine.Domain.Jobs.SyncMediaViews;
 using MovieHub.Engine.Domain.UseCases;
 using MovieHub.Engine.Domain.UseCases.AddMedia.InitiateMovieAddition;
+using MovieHub.Engine.Domain.UseCases.AddMedia.StartMovieUpload;
 using MovieHub.Engine.Domain.UseCases.AddMediaToBasket;
 using MovieHub.Engine.Domain.UseCases.GetMedia;
 using MovieHub.Engine.Domain.UseCases.GetMediaFromBasket;
@@ -51,6 +52,8 @@ public static class ServiceCollectionExtension
         services.AddScoped<IPopMediaViewsStorage, PopMediaViewsStorage>();
         services.AddScoped<IGetMediaFullInfoStorage, GetMediaFullInfoStorage>();
         services.AddScoped<IInitiateMovieAdditionStorage, InitiateMovieAdditionStorage>();
+        services.AddScoped<IStartMovieUploadStorage, StartMovieUploadStorage>();
+        services.AddScoped<IGetMovieRequestStorage, GetMovieRequestStorage>();
         
         services.AddScoped<IDomainEventStorage, DomainEventStorage>();
         
