@@ -3,9 +3,6 @@ using Amazon.Runtime;
 using Amazon.S3;
 using AutoMapper;
 using Microsoft.Extensions.Options;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using MovieHub.Engine.Storage.Mapping;
 using StackExchange.Redis;
@@ -18,12 +15,17 @@ namespace MovieHub.Engine.Storage.Tests;
 public class StorageTestFixture : IAsyncLifetime
 {
     private readonly MongoDbContainer _mongoDbContainer = new MongoDbBuilder()
-        .WithUsername("")
-        .WithPassword("")
+        .WithReplicaSet()
         .Build();
 
     private readonly RedisContainer _redisContainer = new RedisBuilder().Build();
 
+    private readonly MinioContainer _minioContainer = new MinioBuilder()
+        .WithUsername("minioadmin")
+        .WithPassword("minioadmin")
+        .Build();
+
+    private Lazy<Task> _lazyRedisContainerStart;
     private Lazy<Task> _lazyMinioContainerStart;
 
     public MovieHubDbContext GetMovieHubDbContext()
@@ -42,6 +44,7 @@ public class StorageTestFixture : IAsyncLifetime
 
     public IDatabase GetRedisDataBase()
     {
+        _lazyRedisContainerStart.Value.GetAwaiter().GetResult();
         return ConnectionMultiplexer.Connect(_redisContainer.GetConnectionString()).GetDatabase(1);
     }
 
@@ -77,15 +80,18 @@ public class StorageTestFixture : IAsyncLifetime
     }
 
     public virtual async Task InitializeAsync()
-    { 
-        Task.WaitAll(
-         _mongoDbContainer.StartAsync(),
-            _redisContainer.StartAsync());
+    {
+        await _mongoDbContainer.StartAsync();
+
+        _lazyRedisContainerStart =
+            new Lazy<Task>(() => _redisContainer.StartAsync(), LazyThreadSafetyMode.ExecutionAndPublication);
         _lazyMinioContainerStart =
             new Lazy<Task>(() => _minioContainer.StartAsync(), LazyThreadSafetyMode.ExecutionAndPublication);
 
         string initializationScript =
             """
+            db = db.getSiblingDB('test');
+
             db.createCollection("Users");
             db.Users.createIndex({_id: 1});
 
