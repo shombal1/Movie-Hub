@@ -9,4 +9,5 @@ public class MongoDbConfigure
     public string NameUserCollection { get; set; }
     public string NameSeasonCollection { get; set; }
     public string NameAdditionMediaInfoCollection { get; set; }
+    public string NameDomainEventCollection { get; set; }
 }

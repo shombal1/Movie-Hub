@@ -9,6 +9,7 @@ using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using MovieHub.Engine.Storage.Mapping;
 using StackExchange.Redis;
+using Testcontainers.Minio;
 using Testcontainers.MongoDb;
 using Testcontainers.Redis;
 
@@ -36,6 +37,7 @@ public class StorageTestFixture : IAsyncLifetime
             NameSeasonCollection = "Seasons",
             NameAdditionMediaInfoCollection = "AdditionMediaInfo",
         }), new MongoClient( _mongoDbContainer.GetConnectionString()));
+            NameDomainEventCollection = "DomainEvents",
     }
 
     public IDatabase GetRedisDataBase()
@@ -100,9 +102,12 @@ public class StorageTestFixture : IAsyncLifetime
 
             db.createCollection("Seasons");
             db.Seasons.createIndex({seriesId: 1});
-            
+
             db.createCollection("AdditionMediaInfo");
             db.AdditionMediaInfo.createIndex({mediaId: 1});
+
+            db.createCollection("DomainEvents");
+            db.DomainEvents.createIndex({_id: 1});
             """;
 
         await _mongoDbContainer.ExecScriptAsync(initializationScript);

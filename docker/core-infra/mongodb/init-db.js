@@ -24,3 +24,7 @@ sh.shardCollection("MovieHub.Seasons", {seriesId: "hashed"});
 db.createCollection("AdditionMediaInfo");
 db.AdditionMediaInfo.createIndex({mediaId: 1});
 sh.shardCollection("MovieHub.AdditionMediaInfo", {mediaId: "hashed"});
+
+db.createCollection("DomainEvents");
+db.DomainEvents.createIndex({_id: 1});
+sh.shardCollection("MovieHub.DomainEvents", {_id: "hashed"});

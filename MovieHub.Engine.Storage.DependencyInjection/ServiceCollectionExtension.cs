@@ -1,20 +1,20 @@
 ﻿using System.Reflection;
 using Amazon.S3;
 using Microsoft.Extensions.DependencyInjection;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using MovieHub.Engine.Domain;
 using MovieHub.Engine.Domain.Jobs.SyncMediaViews;
+using MovieHub.Engine.Domain.UseCases;
 using MovieHub.Engine.Domain.UseCases.AddMediaToBasket;
 using MovieHub.Engine.Domain.UseCases.GetMedia;
 using MovieHub.Engine.Domain.UseCases.GetMediaFromBasket;
 using MovieHub.Engine.Domain.UseCases.GetMediaFullInfo;
 using MovieHub.Engine.Domain.UseCases.IncrementMediaViews;
 using MovieHub.Engine.Domain.UseCases.RemoveMediaFromBasket;
+using MovieHub.Engine.Storage.Common;
 using MovieHub.Engine.Storage.Mapping;
 using MovieHub.Engine.Storage.Storages;
+using MovieHub.Engine.Storage.Storages.AddMovie;
 using StackExchange.Redis;
 
 namespace MovieHub.Engine.Storage.DependencyInjection;
@@ -27,8 +27,7 @@ public static class ServiceCollectionExtension
         string cashConnectionString,
         string s3StorageConnectionString)
     {
-        BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
-        
+        GlobalMongoSetting.Configure();
         
         services.AddSingleton<IMongoClient>(_ => new MongoClient(contextConnectionString));
         services.AddScoped<MovieHubDbContext>();
@@ -50,6 +49,8 @@ public static class ServiceCollectionExtension
         services.AddScoped<IPushMediaViewsStorage, PushMediaViewsStorage>();
         services.AddScoped<IPopMediaViewsStorage, PopMediaViewsStorage>();
         services.AddScoped<IGetMediaFullInfoStorage, GetMediaFullInfoStorage>();
+        
+        services.AddScoped<IDomainEventStorage, DomainEventStorage>();
         
         services.AddScoped<ISeedGenerator, SeedGenerator>();
         
