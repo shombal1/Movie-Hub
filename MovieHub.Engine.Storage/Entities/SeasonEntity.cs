@@ -1,5 +1,4 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson.Serialization.Attributes;
 using MovieHub.Engine.Storage.Models;
 
 namespace MovieHub.Engine.Storage.Entities;

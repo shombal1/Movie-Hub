@@ -1,4 +1,4 @@
-﻿namespace MovieHub.Engine.Storage;
+﻿namespace MovieHub.Engine.Storage.Common;
 
 public interface IGuidFactory
 {

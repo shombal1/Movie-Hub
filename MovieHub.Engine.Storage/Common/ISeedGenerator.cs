@@ -2,7 +2,7 @@
 using MovieHub.Engine.Storage.Entities;
 using MovieHub.Engine.Storage.Models;
 
-namespace MovieHub.Engine.Storage;
+namespace MovieHub.Engine.Storage.Common;
 
 public interface ISeedGenerator
 {
@@ -14,13 +14,13 @@ public class SeedGenerator(MovieHubDbContext dbContext) : ISeedGenerator
     public async Task GenerateSeed(CancellationToken cancellationToken)
     {
         dbContext.CurrentSession.StartTransaction();
-
+        
         Guid[] movieIds =
         [
             Guid.Parse("6439F228-B237-4966-8DEE-8CAD25BF005C"),
             Guid.Parse("DD6E2807-CA2C-4479-BD84-ADF797DC93B1"),
         ];
-
+        
         Guid[] seriesIds =
         [
             Guid.Parse("FAD0F137-7132-469A-B27A-677DCC42EE94"),
@@ -28,14 +28,14 @@ public class SeedGenerator(MovieHubDbContext dbContext) : ISeedGenerator
         ];
         
         Guid[] mediaIds = movieIds.Concat(seriesIds).ToArray();
-
+        
         await dbContext.Media.DeleteManyAsync(dbContext.CurrentSession,
             Builders<MediaEntity>.Filter.Where(m => mediaIds.Contains(m.Id)), cancellationToken: cancellationToken);
-
+        
         await dbContext.AdditionMediaInfo.DeleteManyAsync(dbContext.CurrentSession,
             Builders<AdditionMediaInfoEntity>.Filter.Where(m => mediaIds.Contains(m.MediaId)),
             cancellationToken: cancellationToken);
-
+        
         await dbContext.Media.InsertManyAsync(dbContext.CurrentSession,
         [
             new MovieEntity
@@ -66,7 +66,7 @@ public class SeedGenerator(MovieHubDbContext dbContext) : ISeedGenerator
                 Genres = ["Action", "Crime", "Drama"],
                 Directors = ["Christopher Nolan"],
                 Views = 1000,
-                Quality = "4K"
+                Quality = "4K",
             },
             new SeriesEntity
             {
@@ -101,7 +101,7 @@ public class SeedGenerator(MovieHubDbContext dbContext) : ISeedGenerator
                 CountEpisodes = 34
             }
         ], cancellationToken: cancellationToken);
-
+        
         await dbContext.AdditionMediaInfo.InsertManyAsync(dbContext.CurrentSession,
         [
             new AdditionMovieInfoEntity
@@ -137,7 +137,7 @@ public class SeedGenerator(MovieHubDbContext dbContext) : ISeedGenerator
                 AgeRating = "TV-14"
             }
         ], cancellationToken: cancellationToken);
-
+        
         Guid[] seasonIds =
         [
             Guid.Parse("CCF09BCC-8B7D-4D1D-91F9-43D338DC09BC"),
@@ -145,10 +145,10 @@ public class SeedGenerator(MovieHubDbContext dbContext) : ISeedGenerator
             Guid.Parse("9A650A73-9E91-4162-9F9E-61C0EF6C5224"),
             Guid.Parse("474EE126-529D-48AD-A545-80DBF1B19796")
         ];
-
+        
         await dbContext.Seasons.DeleteManyAsync(dbContext.CurrentSession,
             Builders<SeasonEntity>.Filter.Where(m => seasonIds.Contains(m.Id)), cancellationToken: cancellationToken);
-
+        
         SeasonEntity[] breakingBadSeasons =
         [
             new SeasonEntity
@@ -176,7 +176,7 @@ public class SeedGenerator(MovieHubDbContext dbContext) : ISeedGenerator
                 ]
             }
         ];
-
+        
         SeasonEntity[] strangerThingsSeasons =
         [
             new SeasonEntity
@@ -207,12 +207,12 @@ public class SeedGenerator(MovieHubDbContext dbContext) : ISeedGenerator
                 ]
             }
         ];
-
+        
         await dbContext.Seasons.InsertManyAsync(dbContext.CurrentSession, strangerThingsSeasons,
             cancellationToken: cancellationToken);
         await dbContext.Seasons.InsertManyAsync(dbContext.CurrentSession, breakingBadSeasons,
             cancellationToken: cancellationToken);
-
+        
         await dbContext.CurrentSession.CommitTransactionAsync(cancellationToken);
     }
 }

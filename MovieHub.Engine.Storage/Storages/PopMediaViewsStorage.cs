@@ -1,5 +1,4 @@
-﻿using System.Text;
-using MovieHub.Engine.Domain.Jobs.SyncMediaViews;
+﻿using MovieHub.Engine.Domain.Jobs.SyncMediaViews;
 using StackExchange.Redis;
 
 namespace MovieHub.Engine.Storage.Storages;

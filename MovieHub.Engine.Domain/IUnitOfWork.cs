@@ -1,4 +1,6 @@
-﻿namespace MovieHub.Engine.Domain;
+﻿using MovieHub.Engine.Domain.UseCases;
+
+namespace MovieHub.Engine.Domain;
 
 public interface IUnitOfWork
 {

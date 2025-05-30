@@ -1,4 +1,6 @@
-﻿namespace MovieHub.Engine.Domain.Jobs.SyncMediaViews;
+﻿using MovieHub.Engine.Domain.UseCases;
+
+namespace MovieHub.Engine.Domain.Jobs.SyncMediaViews;
 
 public interface IGetMediaIdsStorage : IStorage
 {

@@ -1,5 +1,4 @@
-﻿using System.Security;
-using Serilog;
+﻿using Serilog;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Filters;

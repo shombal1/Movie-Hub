@@ -1,6 +1,5 @@
 using FluentAssertions;
 using MovieHub.Engine.Storage.Storages;
-using StackExchange.Redis;
 
 namespace MovieHub.Engine.Storage.Tests.PopMediaViewsStorageTests;
 

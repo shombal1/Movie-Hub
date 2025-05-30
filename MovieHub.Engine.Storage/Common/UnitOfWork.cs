@@ -1,9 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using MovieHub.Engine.Domain;
+using MovieHub.Engine.Domain.UseCases;
 using ReadPreference = MovieHub.Engine.Domain.ReadPreference;
 
-namespace MovieHub.Engine.Storage;
+namespace MovieHub.Engine.Storage.Common;
 
 public class UnitOfWork(IServiceProvider serviceProvider) : IUnitOfWork
 {

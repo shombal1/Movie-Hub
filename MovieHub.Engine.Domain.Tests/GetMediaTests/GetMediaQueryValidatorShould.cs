@@ -1,5 +1,4 @@
-﻿using System.Text;
-using System.Text.Json;
+﻿using System.Text.Json;
 using FluentAssertions;
 using MovieHub.Engine.Domain.UseCases.GetMedia;
 
