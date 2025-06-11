@@ -23,9 +23,10 @@ services:
       context: ./keycloak/
     container_name: ${COMPOSE_PROJECT_NAME}-keycloak
     ports:
-      - "8080:8080"
+      - "8180:8080"
     command: [
       "start-dev",
+      "--import-realm",
       "-Dkeycloak.profile.feature.upload_scripts=enabled",
       "--log-console-color=true",
     ]
@@ -41,6 +42,8 @@ services:
       KAFKA_CLIENT_ID: keycloak
       KAFKA_EVENTS: REGISTER
       KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BROKER_CONTAINER}:29092
+    volumes:
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm.json
     depends_on:
       - postgres-keycloak
   
