@@ -1,6 +1,10 @@
+
+// TODO: Fix MongoDB connection issue:
+// Current error: Timeout after 30000ms with message 'This host is unknown'
+// The problem occurs when trying to resolve DNS name "aaa-movie-hub-items-mongo"
+
 var builder = DistributedApplication.CreateBuilder(args);
-
-
+/*
 var zookeeper = builder
     .AddContainer("zookeeper", "confluentinc/cp-zookeeper:7.6.0")
     .WithContainerName($"{builder.Configuration["Project:Name"]}-zookeeper")
@@ -52,6 +56,7 @@ var kafkaUI = builder
     .WaitFor(kafkaBroker)
     .WithLifetime(ContainerLifetime.Persistent);
 
+
 var mongo = builder
     .AddMongoDB("mongo")
     .WithContainerName($"{builder.Configuration["Project:Name"]}-mongo")
@@ -63,7 +68,6 @@ var mongo = builder
         "chmod 400 /data/mongo-keyfile && chown 999:999 /data/mongo-keyfile && " +
         "exec docker-entrypoint.sh mongod --replSet rs0 --bind_ip_all --dbpath /data/db --keyFile /data/mongo-keyfile")
     .WithLifetime(ContainerLifetime.Persistent);
-
 
 var initMongo = builder
     .AddMongoDB("mongo-init", 21003)
@@ -132,4 +136,6 @@ var mongoExpress = builder
     .WithEnvironment("ME_CONFIG_BASICAUTH_PASSWORD", "admin")
     .WithLifetime(ContainerLifetime.Persistent);
 
+
+*/
 builder.Build().Run();
