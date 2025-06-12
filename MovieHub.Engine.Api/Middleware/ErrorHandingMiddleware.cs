@@ -1,47 +1,43 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using MovieHub.Engine.Domain.Exceptions;
 
 namespace MovieHub.Engine.Api.Middleware;
 
-public class ErrorHandingMiddleware(RequestDelegate next)
+public class ErrorHandingMiddleware : IExceptionHandler
 {
-    public async Task InvokeAsync(
-        HttpContext context,
-        ProblemDetailsFactory problemDetailsFactory,
-        ILogger<ErrorHandingMiddleware> logger)
+    public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
-        try
+        ProblemDetailsFactory problemDetailsFactory = httpContext.RequestServices.GetRequiredService<ProblemDetailsFactory>();
+        ILogger<ErrorHandingMiddleware> logger = httpContext.RequestServices.GetRequiredService<ILogger<ErrorHandingMiddleware>>();
+
+        ProblemDetails problemDetails;
+        switch (exception)
         {
-            await next(context);
+            case ValidationException validationException:
+                problemDetails = problemDetailsFactory.CreateFrom(httpContext, validationException);
+                break;
+            case DomainException domainException:
+                problemDetails = problemDetailsFactory.CreateFrom(httpContext, domainException);
+
+                logger.LogError(domainException, "domain exception");
+                break;
+            default:
+                problemDetails = problemDetailsFactory.CreateProblemDetails(
+                    httpContext,
+                    StatusCodes.Status500InternalServerError,
+                    "Unhandled error",
+                    detail: exception.Message);
+
+                logger.LogError(exception, "Unhandled exception");
+                break;
         }
-        catch (Exception exception) 
-        {
-            ProblemDetails problemDetails;
-            switch (exception)
-            {
-                case ValidationException validationException:
-                    problemDetails = problemDetailsFactory.CreateFrom(context, validationException);
-                    break;
-                case DomainException domainException:
-                    problemDetails = problemDetailsFactory.CreateFrom(context, domainException);
 
-                    logger.LogError(domainException, "domain exception");
-                    break;
-                default:
-                    problemDetails = problemDetailsFactory.CreateProblemDetails(
-                        context,
-                        StatusCodes.Status500InternalServerError,
-                        "Unhandled error",
-                        detail: exception.Message);
+        httpContext.Response.StatusCode = problemDetails.Status ?? StatusCodes.Status500InternalServerError;
+        await httpContext.Response.WriteAsJsonAsync(problemDetails, problemDetails.GetType(), cancellationToken: cancellationToken);
 
-                    logger.LogError(exception, "Unhandled exception");
-                    break;
-            }
-
-            context.Response.StatusCode = problemDetails.Status ?? StatusCodes.Status500InternalServerError;
-            await context.Response.WriteAsJsonAsync(problemDetails, problemDetails.GetType());
-        }
+        return true;
     }
 }

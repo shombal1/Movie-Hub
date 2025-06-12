@@ -56,6 +56,8 @@ builder.Services.AddSwaggerGenWithAuth(configuration);
 
 builder.Services.AddAutoMapper(conf=>conf.AddMaps(Assembly.GetAssembly(typeof(MediaProfile))));
 
+builder.Services.AddExceptionHandler<ErrorHandingMiddleware>();
+
 var app = builder.Build();
 
 app.UseSwagger();
@@ -68,7 +70,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseMiddleware<ErrorHandingMiddleware>();
+app.UseExceptionHandler();
 app.UseMiddleware<IdentityMiddleware>();
 
 app.MapControllers();
