@@ -2,12 +2,14 @@ using System.Reflection;
 using Keycloak.AuthServices.Authentication;
 using Keycloak.AuthServices.Authorization;
 using Keycloak.AuthServices.Common;
+using Microsoft.OpenApi;
 using MovieHub.Engine.Api;
 using MovieHub.Engine.Api.Mapper;
 using MovieHub.Engine.Api.Middleware;
 using MovieHub.Engine.Domain.DependencyInjection;
 using MovieHub.Engine.Storage;
 using MovieHub.Engine.Storage.DependencyInjection;
+using Swashbuckle.AspNetCore.Swagger;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,7 +62,11 @@ builder.Services.AddExceptionHandler<ErrorHandingMiddleware>();
 
 var app = builder.Build();
 
-app.UseSwagger();
+
+app.UseSwagger(options: new SwaggerOptions()
+{
+    OpenApiVersion = OpenApiSpecVersion.OpenApi3_0
+});
 app.UseSwaggerUI(options => options.OAuthClientId(builder.Configuration["Keycloak:resource"]!));
 
 app.UseCors("AllowAll");
@@ -70,7 +76,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseExceptionHandler();
+app.UseExceptionHandler(_ => { });
 app.UseMiddleware<IdentityMiddleware>();
 
 app.MapControllers();
