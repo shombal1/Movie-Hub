@@ -49,7 +49,7 @@ services:
   
   zookeeper:
     image: 'confluentinc/cp-zookeeper:7.6.0'
-    container_name:  ${COMPOSE_PROJECT_NAME}-zookeeper
+    container_name: ${COMPOSE_PROJECT_NAME}-zookeeper
     ports:
       - "2181:2181"
     volumes:
@@ -78,7 +78,7 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-      KAFKA_ZOOKEEPER_CONNECT:  ${COMPOSE_PROJECT_NAME}-zookeeper:2181
+      KAFKA_ZOOKEEPER_CONNECT: ${COMPOSE_PROJECT_NAME}-zookeeper:2181
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://${KAFKA_BROKER_CONTAINER}:29092,PLAINTEXT_HOST://localhost:9092
     healthcheck:
@@ -86,14 +86,14 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
-    
+  
   
   kafka-init:
     image: confluentinc/cp-kafka:7.6.0
     depends_on:
       kafka-broker:
         condition: service_healthy
-    container_name:  ${COMPOSE_PROJECT_NAME}-kafka-init
+    container_name: ${COMPOSE_PROJECT_NAME}-kafka-init
     command: >
       bash -c "
         echo 'Waiting for Kafka to be ready...';
@@ -106,12 +106,22 @@ services:
       --partitions 1 \
       --replication-factor 1 \
       --config retention.ms=604800000 \
+      --config unclean.leader.election.enable=false \
       --if-not-exists
+      
+      kafka-topics --bootstrap-server ${KAFKA_BROKER_CONTAINER}:29092 \
+      --create \
+      --topic ${MINIO_NOTIFICATIONS_TOPIC} \
+      --partitions 1 \
+      --replication-factor 1 \
+      --config retention.ms=604800000 \
+      --config unclean.leader.election.enable=false \
+      --if-not-exists;
         echo 'Topic initialized successfully'
       "
   
   kafka-ui:
-    container_name:  ${COMPOSE_PROJECT_NAME}-kafka-ui
+    container_name: ${COMPOSE_PROJECT_NAME}-kafka-ui
     image: 'provectuslabs/kafka-ui:latest'
     ports:
       - 8082:8080
@@ -127,7 +137,7 @@ services:
   
   jaeger:
     image: 'jaegertracing/all-in-one'
-    container_name:  ${COMPOSE_PROJECT_NAME}-jaeger
+    container_name: ${COMPOSE_PROJECT_NAME}-jaeger
     environment:
       COLLECTOR_ZIPKIN_HOST_PORT: 9411
       COLLECTOR_OTLP_ENABLED: true
@@ -145,7 +155,7 @@ services:
   
   opensearch:
     image: 'opensearchproject/opensearch:latest'
-    container_name:  ${COMPOSE_PROJECT_NAME}-opensearch
+    container_name: ${COMPOSE_PROJECT_NAME}-opensearch
     environment:
       discovery.type: 'single-node'
       OPENSEARCH_INITIAL_ADMIN_PASSWORD: ${OPENSEARCH_ADMIN_PASSWORD}
@@ -158,7 +168,7 @@ services:
   
   opensearch-dashboards:
     image: 'opensearchproject/opensearch-dashboards:latest'
-    container_name:  ${COMPOSE_PROJECT_NAME}-opensearch-dashboards
+    container_name: ${COMPOSE_PROJECT_NAME}-opensearch-dashboards
     ports:
       - '5601:5601'
     expose:
@@ -191,18 +201,57 @@ services:
   minio-init:
     image: 'minio/mc:RELEASE.2025-04-08T15-39-49Z-cpuv1'
     container_name: ${COMPOSE_PROJECT_NAME}-minio-init
+    tty: true
     depends_on:
       - minio
+      - kafka-broker
     entrypoint: >
       /bin/sh -c "
-        echo 'Waiting for MinIO to be ready...';
+        set -e
+
+        echo 'Waiting for MinIO...'
         until mc alias set myminio http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD}; do
-          echo 'MinIO is not ready yet. Retrying in 2s...';
-          sleep 2;
-        done;
-        echo 'MinIO is ready. Creating bucket if needed...';
-        mc mb myminio/${MINIO_BUCKET} || echo 'Bucket already exists';
+          echo 'MinIO is not ready. Retrying in 2s...'
+          sleep 2
+        done
+        echo 'MinIO is ready.'
+
+        echo 'Checking/creating bucket...'
+        mc ls myminio/${MINIO_BUCKET} > /dev/null 2>&1 || mc mb myminio/${MINIO_BUCKET}
+
+        echo 'Configuring publishing to Kafka...'
+        mc admin config set myminio/ notify_kafka:1 \
+          enable=true \
+          brokers=${KAFKA_BROKER_CONTAINER}:29092 \
+          topic=${MINIO_NOTIFICATIONS_TOPIC} \
+          queue_dir=/data/events \
+          queue_limit=100000 \
+          retry_interval=5s \
+          max_retries=15 \
+          comment='Надежная доставка событий в Kafka'
+
+        echo 'Applying configuration changes...'
+        mc admin service restart myminio
+
+        sleep 5
+
+        echo 'Checking Kafka configuration:'
+        mc admin config get myminio notify_kafka
+
+        echo 'Assigning event bucket -> Kafka...'
+        mc event remove myminio/\${MINIO_BUCKET} --event put --force
+        mc event add myminio/\${MINIO_BUCKET} arn:minio:sqs::1:kafka --event put
+
+        echo 'MinIO Kafka notification setup complete.'
       "
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_BUCKET: ${MINIO_BUCKET}
+      KAFKA_BROKER_CONTAINER: ${KAFKA_BROKER_CONTAINER}
+      MINIO_NOTIFICATIONS_TOPIC: ${MINIO_NOTIFICATIONS_TOPIC}
+
+
 
 volumes:
   postgres-keycloak:
@@ -211,18 +260,3 @@ volumes:
   kafka:
   zookeeper:
   minio:
-
-#  api:
-#    build:
-#      context: ./..
-#      dockerfile: docker/Dockerfile
-#    container_name: 'movie-hub-api'
-#    image: 'my-movie-hub:new-local'
-#    ports:
-#      - '7189:8080'
-#    environment:
-##      ASPNETCORE_ENVIRONMENT: 'Development'
-#      ASPNET_URLS: 'http://0.0.0.0:7189'
-##      ConnectionStrings__EnglishHubDbContext: 'Host=postgres;User Id=shombal;Password=1111;Database=english_hub;Port=5432'
-##      ConnectionStrings__Logs: 'http://loki:3100'
-##      ConnectionStrings__Tracing: 'http://jaeger:4318/v1/traces'
