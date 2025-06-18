@@ -1,4 +1,4 @@
-﻿FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+﻿FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /app
 
 COPY MovieHub.Engine.Api/ ./MovieHub.Engine.Api/
@@ -11,7 +11,7 @@ RUN dotnet restore MovieHub.Engine.Api && \
     dotnet publish -c Debug -o out MovieHub.Engine.Api
 
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/out .
 
