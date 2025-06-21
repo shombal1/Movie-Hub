@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieHub.Engine.Domain.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieHub.Host", "MovieHub.Host\MovieHub.Host.csproj", "{7A716F7A-2872-4481-80F6-33A3C701C7C8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieHub.MediaCompressor", "MovieHub.MediaCompressor\MovieHub.MediaCompressor.csproj", "{EDDAA901-E847-4984-828F-71875285BC8A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -64,6 +66,10 @@ Global
 		{7A716F7A-2872-4481-80F6-33A3C701C7C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A716F7A-2872-4481-80F6-33A3C701C7C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A716F7A-2872-4481-80F6-33A3C701C7C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDDAA901-E847-4984-828F-71875285BC8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDDAA901-E847-4984-828F-71875285BC8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDDAA901-E847-4984-828F-71875285BC8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDDAA901-E847-4984-828F-71875285BC8A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{9CC58B19-8C7C-4251-8D65-E00BA8701652} = {0A81A912-A30D-499C-A45E-EE24011EFC7C}
