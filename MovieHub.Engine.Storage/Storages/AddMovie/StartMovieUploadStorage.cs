@@ -5,13 +5,14 @@ namespace MovieHub.Engine.Storage.Storages.AddMovie;
 
 public class StartMovieUploadStorage(IS3FileUploadService fileUploadService) : IStartMovieUploadStorage
 {
-    public const string KeyFormat = "movies/{0}/videos/original/{1}";
+    public const string KeyFormat = "movies/{0}/videos/{1}/{2}";
 
-    public async Task<(string key, string uploadId)> InitMultiPartUpload(Guid movieId, string fileName,string contentType, CancellationToken cancellationToken)
+    public async Task<(string key, string uploadId)> InitMultiPartUpload(Guid movieId, string fileName,
+        string contentType, CancellationToken cancellationToken)
     {
         string normalizedFileName = FileNameNormalizer.NormalizeForFileName(fileName);
-        string key = string.Format(KeyFormat, movieId, normalizedFileName);
-        
+        string key = string.Format(KeyFormat, movieId, "original", normalizedFileName);
+
         var uploadId = await fileUploadService.InitMultiPartUpload(
             key,
             contentType,
@@ -19,9 +20,10 @@ public class StartMovieUploadStorage(IS3FileUploadService fileUploadService) : I
             {
                 ["x-amz-meta-movie-id"] = movieId.ToString(),
                 ["x-amz-meta-file-name"] = normalizedFileName,
-                ["x-amz-meta-type"] = "movie"
+                ["x-amz-meta-type"] = "movie",
+                ["x-amz-meta-key-format"] = KeyFormat
             }, cancellationToken);
 
-        return (key,uploadId);
+        return (key, uploadId);
     }
 }
