@@ -10,7 +10,11 @@ public class StartMovieUploadStorage(IS3FileUploadService fileUploadService) : I
     public async Task<(string key, string uploadId)> InitMultiPartUpload(Guid movieId, string fileName,
         string contentType, CancellationToken cancellationToken)
     {
-        string normalizedFileName = FileNameNormalizer.NormalizeForFileName(fileName);
+        string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
+        string fileExtension = Path.GetExtension(fileName);
+
+        
+        string normalizedFileName = FileNameNormalizer.NormalizeForFileName(fileNameWithoutExtension) + fileExtension;
         string key = string.Format(KeyFormat, movieId, "original", normalizedFileName);
 
         var uploadId = await fileUploadService.InitMultiPartUpload(

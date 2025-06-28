@@ -8,7 +8,7 @@ public class TextNormalizerShould
     [Fact]
     public void NormalizeForFileName_WhenInputIsEmpty_ShouldReturnFallbackValue()
     {
-        string input = string.Empty;
+        string input = "";
 
         string result = FileNameNormalizer.NormalizeForFileName(input);
 
@@ -24,7 +24,7 @@ public class TextNormalizerShould
 
         result.Should().Be("the-shawshank-redemption");
     }
-
+    
     [Fact]
     public void NormalizeForFileName_WithSpecialCharacters_ShouldReplaceWithDashes()
     {
