@@ -186,20 +186,23 @@ services:
       - redis:/data
   
   minio:
-    image: 'minio/minio:RELEASE.2025-04-08T15-41-24Z-cpuv1'
+    image: 'minio/minio:latest'
     container_name: ${COMPOSE_PROJECT_NAME}-minio
-    command: server /data --console-address ":9001"
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_NOTIFY_KAFKA_ENABLE_1: "on"
+      MINIO_NOTIFY_KAFKA_BROKERS_1: "${KAFKA_BROKER_CONTAINER}:29092"
+      MINIO_NOTIFY_KAFKA_TOPIC_1: "${MINIO_NOTIFICATIONS_TOPIC}"
     volumes:
       - minio:/data
     ports:
       - "${MINIO_API_PORT}:9000"
       - "${MINIO_WEB_CONSOLE_PORT}:9001"
+    command: server /data --console-address ":9001"
 
   minio-init:
-    image: 'minio/mc:RELEASE.2025-04-08T15-39-49Z-cpuv1'
+    image: 'minio/mc:latest'
     container_name: ${COMPOSE_PROJECT_NAME}-minio-init
     tty: true
     depends_on:
@@ -217,8 +220,9 @@ services:
         echo 'MinIO is ready.'
 
         echo 'Checking/creating bucket...'
-        mc ls myminio/${MINIO_BUCKET} > /dev/null 2>&1 || mc mb myminio/${MINIO_BUCKET}
-
+        mc ls myminio/${MINIO_UPLOADS_BUCKET} > /dev/null 2>&1 || mc mb myminio/${MINIO_UPLOADS_BUCKET}
+        mc ls myminio/${MINIO_PROCESSED_BUCKET} > /dev/null 2>&1 || mc mb myminio/${MINIO_PROCESSED_BUCKET}
+  
         echo 'Configuring publishing to Kafka...'
         mc admin config set myminio/ notify_kafka:1 \
           enable=true \
@@ -227,8 +231,7 @@ services:
           queue_dir=/data/events \
           queue_limit=100000 \
           retry_interval=5s \
-          max_retries=15 \
-          comment='Надежная доставка событий в Kafka'
+          max_retries=15
 
         echo 'Applying configuration changes...'
         mc admin service restart myminio
@@ -239,17 +242,14 @@ services:
         mc admin config get myminio notify_kafka
 
         echo 'Assigning event bucket -> Kafka...'
-        mc event remove myminio/\${MINIO_BUCKET} --event put --force
-        mc event add myminio/\${MINIO_BUCKET} arn:minio:sqs::1:kafka --event put
+        mc event remove myminio/\${MINIO_UPLOADS_BUCKET} --event put --force
+        mc event add myminio/\${MINIO_UPLOADS_BUCKET} arn:minio:sqs::1:kafka --event put
 
         echo 'MinIO Kafka notification setup complete.'
       "
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
-      MINIO_BUCKET: ${MINIO_BUCKET}
-      KAFKA_BROKER_CONTAINER: ${KAFKA_BROKER_CONTAINER}
-      MINIO_NOTIFICATIONS_TOPIC: ${MINIO_NOTIFICATIONS_TOPIC}
 
 
 

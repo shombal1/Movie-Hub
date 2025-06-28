@@ -2,5 +2,6 @@
 
 public class S3Settings
 {
-    public string BucketName { get; init; } = "";
+    public string ProcessedBucket { get; init; } = ""; 
+    public string UploadsBucket { get; init; } = ""; 
 }

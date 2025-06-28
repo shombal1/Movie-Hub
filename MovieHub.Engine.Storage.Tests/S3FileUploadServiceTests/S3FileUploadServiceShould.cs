@@ -22,8 +22,8 @@ public class S3FileUploadServiceShould(StorageTestFixture fixture) : IClassFixtu
     public async Task InitializeAsync()
     {
         _s3Client = await fixture.GetAmazonS3();
-        _s3Settings = new S3Settings { BucketName = TestBucketName };
-        await _s3Client.PutBucketAsync(new PutBucketRequest { BucketName = _s3Settings.BucketName });
+        _s3Settings = new S3Settings { UploadsBucket = TestBucketName };
+        await _s3Client.PutBucketAsync(new PutBucketRequest { BucketName = _s3Settings.UploadsBucket });
 
         var options = Options.Create(_s3Settings);
         _sut = new S3FileUploadService(_s3Client, options, TimeProvider.System);
@@ -68,7 +68,7 @@ public class S3FileUploadServiceShould(StorageTestFixture fixture) : IClassFixtu
         var headObjectResponse = await _s3Client.GetObjectMetadataAsync(
             new GetObjectMetadataRequest
             {
-                BucketName = _s3Settings.BucketName,
+                BucketName = _s3Settings.UploadsBucket,
                 Key = fileKey
             });
 

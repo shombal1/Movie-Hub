@@ -21,6 +21,7 @@ services:
       ConnectionStrings__MovieHubMongoDb: "mongodb://host.docker.internal:${MONGO_ROUTER_PORT}"
       ConnectionStrings__Redis : "${REDIS}:${REDIS_PORT},abortConnect=false"
       ConnectionStrings__S3Storage: Endpoint=http://host.docker.internal:${MINIO_API_PORT};AccessKey=${MINIO_ROOT_USER};SecretKey=${MINIO_ROOT_PASSWORD};ForcePathStyle=true
-      S3Settings__BucketName: ${MINIO_BUCKET}
+      S3Settings__ProcessedBucket: ${MINIO_PROCESSED_BUCKET}
+      S3Settings__UploadsBucket: ${MINIO_UPLOADS_BUCKET}
       DOTNET_USE_POLLING_FILE_WATCHER: true
       Keycloak__credentials__secret: ${KEYCLOAK__CREDENTIALS__SECRET}

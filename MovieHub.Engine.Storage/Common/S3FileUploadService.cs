@@ -15,7 +15,7 @@ public class S3FileUploadService(
     {
         var request = new InitiateMultipartUploadRequest
         {
-            BucketName = _s3Settings.BucketName,
+            BucketName = _s3Settings.UploadsBucket,
             Key = key,
             ContentType = contentType,
         };
@@ -35,7 +35,7 @@ public class S3FileUploadService(
         var now = timeProvider.GetUtcNow();
         var request = new GetPreSignedUrlRequest
         {
-            BucketName = _s3Settings.BucketName,
+            BucketName = _s3Settings.UploadsBucket,
             Key = key,
             Verb = HttpVerb.PUT,
             Expires = now.UtcDateTime.AddMinutes(expirationTimeMinutes),
@@ -52,7 +52,7 @@ public class S3FileUploadService(
     {
         var request = new CompleteMultipartUploadRequest
         {
-            BucketName = _s3Settings.BucketName,
+            BucketName = _s3Settings.UploadsBucket,
             Key = key,
             UploadId = uploadId,
             PartETags = parts,
