@@ -1,4 +1,6 @@
 using Amazon.S3;
+using Confluent.Kafka;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using MovieHub.MediaCompressor;
 using MovieHub.MediaCompressor.Domain;
@@ -11,6 +13,13 @@ ConfigurationManager configuration = builder.Configuration;
 
 GlobalMongoSetting.Configure();
 
+
+builder.Services.Configure<ConsumerConfig>(configuration
+    .GetSection("Kafka").Bind);
+builder.Services.Configure<KafkaTopic>(configuration
+    .GetSection("KafkaTopic").Bind);
+builder.Services.AddSingleton(sp => new ConsumerBuilder<byte[], byte[]>(
+    sp.GetRequiredService<IOptions<ConsumerConfig>>().Value).Build());
 
 builder.Services.Configure<S3Settings>(builder.Configuration.GetSection("S3Settings").Bind);
 builder.Services.Configure<MongoDbConfigure>(builder.Configuration.GetSection("MongoDbConfigure").Bind);
@@ -45,6 +54,9 @@ builder.Services.AddScoped<IMediaQualityAnalyzerStorage, MediaQualityAnalyzerSto
 builder.Services.AddScoped<IS3StorageService, S3StorageService>();
 builder.Services.AddScoped<IUpdateProcessingStatusStorage, UpdateProcessingStatusStorage>();
 
+builder.Services.AddHostedService<MediaCompressorConsumer>();
+
+builder.Services.AddScoped<IMovieCompressUseCase, MovieCompressUseCase>();
 
 var app = builder.Build();
 app.Run();
