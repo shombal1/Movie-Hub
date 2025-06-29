@@ -14,6 +14,7 @@ GlobalMongoSetting.Configure();
 
 builder.Services.Configure<S3Settings>(builder.Configuration.GetSection("S3Settings").Bind);
 builder.Services.Configure<MongoDbConfigure>(builder.Configuration.GetSection("MongoDbConfigure").Bind);
+builder.Services.Configure<DownloadSettings>(builder.Configuration.GetSection("DownloadSettings").Bind);
 builder.Services.AddSingleton<IMongoClient>(_ => new MongoClient(configuration.GetConnectionString("MovieHubMongoDb")));
 builder.Services.AddScoped<MovieHubMongoDb>();
 
@@ -40,6 +41,7 @@ builder.Services.AddSingleton<IAmazonS3>(sp =>
 });
 
 builder.Services.AddScoped<IGetProcessingStatusStorage, GetProcessingStatusStorage>();
+builder.Services.AddScoped<IMediaQualityAnalyzerStorage, MediaQualityAnalyzerStorage>();
 builder.Services.AddScoped<IS3StorageService, S3StorageService>();
 builder.Services.AddScoped<IUpdateProcessingStatusStorage, UpdateProcessingStatusStorage>();
 
