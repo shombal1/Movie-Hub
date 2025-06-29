@@ -3,7 +3,7 @@ using MongoDB.Driver;
 
 namespace MovieHub.MediaCompressor.Mongo;
 
-public class MongoDbContext
+public class MovieHubMongoDb
 {
     private IMongoDatabase Database { get; }
     
@@ -11,7 +11,7 @@ public class MongoDbContext
     
     public IClientSessionHandle CurrentSession { get; }
     
-    public MongoDbContext(IMongoClient mongoClient, IOptions<MongoDbConfigure> options)
+    public MovieHubMongoDb(IMongoClient mongoClient, IOptions<MongoDbConfigure> options)
     {
         MongoDbConfigure configure = options.Value;
         
