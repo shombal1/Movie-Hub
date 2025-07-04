@@ -6,16 +6,14 @@ namespace MovieHub.Engine.Storage.Common;
 
 public class S3FileUploadService(
     IAmazonS3 s3Client,
-    IOptions<S3Settings> options,
     TimeProvider timeProvider) : IS3FileUploadService
 {
-    private readonly S3Settings _s3Settings = options.Value;
 
-    public async Task<string> InitMultiPartUpload(string key,string contentType,Dictionary<string,string> metaData, CancellationToken cancellationToken)
+    public async Task<string> InitMultiPartUpload(string bucketName, string key,string contentType,Dictionary<string,string> metaData, CancellationToken cancellationToken)
     {
         var request = new InitiateMultipartUploadRequest
         {
-            BucketName = _s3Settings.UploadsBucket,
+            BucketName = bucketName,
             Key = key,
             ContentType = contentType,
         };
@@ -29,13 +27,13 @@ public class S3FileUploadService(
         return response.UploadId;
     }
 
-    public async Task<string> GeneratePresignedUrlForPart(string uploadId, int partNumber, string key,
+    public async Task<string> GeneratePresignedUrlForPart(string bucketName, string uploadId, int partNumber, string key,
         int expirationTimeMinutes, CancellationToken cancellationToken)
     {
         var now = timeProvider.GetUtcNow();
         var request = new GetPreSignedUrlRequest
         {
-            BucketName = _s3Settings.UploadsBucket,
+            BucketName = bucketName,
             Key = key,
             Verb = HttpVerb.PUT,
             Expires = now.UtcDateTime.AddMinutes(expirationTimeMinutes),
@@ -47,12 +45,12 @@ public class S3FileUploadService(
         return url;
     }
 
-    public async Task CompleteMultipartUpload(string uploadId, List<PartETag> parts, string key,
+    public async Task CompleteMultipartUpload(string bucketName, string uploadId, List<PartETag> parts, string key,
         CancellationToken cancellationToken)
     {
         var request = new CompleteMultipartUploadRequest
         {
-            BucketName = _s3Settings.UploadsBucket,
+            BucketName = bucketName,
             Key = key,
             UploadId = uploadId,
             PartETags = parts,

@@ -1,9 +1,10 @@
-﻿using MovieHub.Engine.Domain.UseCases.AddMedia.StartMovieUpload;
+﻿using Microsoft.Extensions.Options;
+using MovieHub.Engine.Domain.UseCases.AddMedia.StartMovieUpload;
 using MovieHub.Engine.Storage.Common;
 
 namespace MovieHub.Engine.Storage.Storages.AddMovie;
 
-public class StartMovieUploadStorage(IS3FileUploadService fileUploadService) : IStartMovieUploadStorage
+public class StartMovieUploadStorage(IS3FileUploadService fileUploadService, IOptions<S3Settings> s3Settings) : IStartMovieUploadStorage
 {
     public const string KeyFormat = "movies/{0}/videos/{1}/{2}";
 
@@ -18,6 +19,7 @@ public class StartMovieUploadStorage(IS3FileUploadService fileUploadService) : I
         string key = string.Format(KeyFormat, movieId, "original", normalizedFileName);
 
         var uploadId = await fileUploadService.InitMultiPartUpload(
+            s3Settings.Value.UploadsBucket,
             key,
             contentType,
             new Dictionary<string, string>

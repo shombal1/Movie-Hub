@@ -25,8 +25,7 @@ public class S3FileUploadServiceShould(StorageTestFixture fixture) : IClassFixtu
         _s3Settings = new S3Settings { UploadsBucket = TestBucketName };
         await _s3Client.PutBucketAsync(new PutBucketRequest { BucketName = _s3Settings.UploadsBucket });
 
-        var options = Options.Create(_s3Settings);
-        _sut = new S3FileUploadService(_s3Client, options, TimeProvider.System);
+        _sut = new S3FileUploadService(_s3Client, TimeProvider.System);
     }
 
     public Task DisposeAsync()
@@ -43,6 +42,7 @@ public class S3FileUploadServiceShould(StorageTestFixture fixture) : IClassFixtu
         int partCount = (int)Math.Ceiling((double)TotalSizeMb / PartSizeMb);
 
         var uploadId = await _sut.InitMultiPartUpload(
+            _s3Settings.UploadsBucket,
             fileKey, contentType, new Dictionary<string, string>()
             {
                 ["file-name"] = fileName,
@@ -52,6 +52,7 @@ public class S3FileUploadServiceShould(StorageTestFixture fixture) : IClassFixtu
         for (int partNumber = 1; partNumber <= partCount; partNumber++)
         {
             var url = await _sut.GeneratePresignedUrlForPart(
+                _s3Settings.UploadsBucket,
                 uploadId, partNumber, fileKey, UrlExpirationMinutes, CancellationToken.None);
 
             int currentPartSize = (partNumber == partCount && TotalSize % PartSize != 0)
@@ -63,6 +64,7 @@ public class S3FileUploadServiceShould(StorageTestFixture fixture) : IClassFixtu
         }
 
         await _sut.CompleteMultipartUpload(
+            _s3Settings.UploadsBucket,
             uploadId, parts, fileKey, CancellationToken.None);
 
         var headObjectResponse = await _s3Client.GetObjectMetadataAsync(
