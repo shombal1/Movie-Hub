@@ -11,5 +11,4 @@ public abstract class Media
     public long Views { get; set; }
     public IEnumerable<string> Countries { get; set; } = null!;
     public IEnumerable<string> Genres { get; set; } = null!;
-    public IEnumerable<string> Directors { get; set; } = null!;
 }

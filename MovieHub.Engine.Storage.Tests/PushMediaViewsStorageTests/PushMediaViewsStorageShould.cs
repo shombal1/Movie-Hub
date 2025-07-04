@@ -33,7 +33,6 @@ public class PushMediaViewsStorageShould(StorageTestFixture fixture) : IClassFix
             Id = mediaId,
             Views = 10,
             Countries = [],
-            Directors = [],
             Genres = []
         });
 

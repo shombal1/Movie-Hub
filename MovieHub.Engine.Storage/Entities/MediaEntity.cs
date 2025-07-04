@@ -32,9 +32,7 @@ public abstract class MediaEntity
 
     [BsonElement("genres")]
     public IEnumerable<string> Genres { get; set; } = null!;
-
-    [BsonElement("directors")]
-    public IEnumerable<string> Directors { get; set; } = null!;
+    
     
     [BsonElement("views")]
     public long Views { get; set; }

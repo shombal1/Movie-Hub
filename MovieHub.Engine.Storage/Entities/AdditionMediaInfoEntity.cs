@@ -1,4 +1,5 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
+using MovieHub.Engine.Storage.Models;
 
 namespace MovieHub.Engine.Storage.Entities;
 
@@ -11,7 +12,9 @@ public abstract class AdditionMediaInfoEntity
     public Guid MediaId { get; set; }
     
     [BsonElement("actors")]
-    public IEnumerable<string> Actors { get; set; }= null!;
+    public IEnumerable<BasePersonInfo> Actors { get; set; }= null!;
+    [BsonElement("directors")]
+    public IEnumerable<BasePersonInfo> Directors { get; set; } = null!;
 
     [BsonElement("ageRating")]
     public string AgeRating { get; set; } = "";
@@ -19,6 +22,7 @@ public abstract class AdditionMediaInfoEntity
     [BsonElement("budget")]
     public long? Budget { get; set; }
     
+    // used for request to get full media info
     [BsonElement("mainInfoList")]
     [BsonIgnoreIfNull]
     public IEnumerable<MediaEntity> MainInfoList { get; set; } = null!;

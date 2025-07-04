@@ -16,15 +16,14 @@ public class MediaProfile : Profile
             .ForMember(dest => dest.PublishedAt, opt => opt.MapFrom(src => src.PublishedAt))
             .ForMember(dest => dest.Countries, opt => opt.MapFrom(src => src.Countries))
             .ForMember(dest => dest.Genres, opt => opt.MapFrom(src => src.Genres))
-            .ForMember(dest => dest.Directors, opt => opt.MapFrom(src => src.Directors))
             .ForMember(dest => dest.Views, opt => opt.MapFrom(src => src.Views))
             .Include<MovieEntity, Movie>()
             .Include<SeriesEntity, Series>();
-        
+
         CreateMap<MovieEntity, Movie>()
             .ForMember(dest => dest.Quality, opt => opt.MapFrom(src => src.Quality))
             .IncludeBase<MediaEntity, Media>();
-        
+
         CreateMap<SeriesEntity, Series>()
             .ForMember(dest => dest.CountSeasons, opt => opt.MapFrom(src => src.CountSeasons))
             .ForMember(dest => dest.CountEpisodes, opt => opt.MapFrom(src => src.CountEpisodes))
@@ -33,6 +32,42 @@ public class MediaProfile : Profile
         CreateMap<MovieRequestEntity, MovieRequest>()
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
 
-        CreateMap<Models.ProcessingStatus,ProcessingStatus>();
+        CreateMap<Models.ProcessingStatus, ProcessingStatus>();
+
+
+        CreateMap<AdditionMediaInfoEntity, MediaFullInfo>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.MediaId))
+            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.MainInfo.Title))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.MainInfo.Description))
+            .ForMember(dest => dest.ReleasedAt, opt => opt.MapFrom(src => src.MainInfo.ReleasedAt))
+            .ForMember(dest => dest.PublishedAt, opt => opt.MapFrom(src => src.MainInfo.PublishedAt))
+            .ForMember(dest => dest.Views, opt => opt.MapFrom(src => src.MainInfo.Views))
+            .ForMember(dest => dest.Countries, opt => opt.MapFrom(src => src.MainInfo.Countries))
+            .ForMember(dest => dest.Genres, opt => opt.MapFrom(src => src.MainInfo.Genres))
+            .ForMember(dest => dest.Directors, opt => opt.MapFrom(src => src.Directors))
+            .ForMember(dest => dest.Actors, opt => opt.MapFrom(src => src.Actors))
+            .ForMember(dest => dest.AgeRating, opt => opt.MapFrom(src => src.AgeRating))
+            .ForMember(dest => dest.Budget, opt => opt.MapFrom(src => src.Budget))
+            .Include<AdditionMovieInfoEntity, MovieFullInfo>()
+            .Include<AdditionSeriesInfoEntity, SeriesFullInfo>();
+
+        CreateMap<AdditionMovieInfoEntity, MovieFullInfo>()
+            .ForMember(dest => dest.Quality, opt => opt.MapFrom(src => ((MovieEntity)src.MainInfo).Quality))
+            .ForMember(dest => dest.StreamingUrl, opt => opt.MapFrom(src => src.StreamingUrl))
+            .ForMember(dest => dest.Duration, opt => opt.MapFrom(src => src.Duration))
+            .IncludeBase<AdditionMediaInfoEntity, MediaFullInfo>();
+
+        CreateMap<AdditionSeriesInfoEntity, SeriesFullInfo>()
+            .ForMember(dest => dest.CountSeasons, opt => opt.MapFrom(src => ((SeriesEntity)src.MainInfo).CountSeasons))
+            .ForMember(dest => dest.CountEpisodes,
+                opt => opt.MapFrom(src => ((SeriesEntity)src.MainInfo).CountEpisodes))
+            .ForMember(dest => dest.Seasons, opt => opt.MapFrom(src => src.Seasons))
+            .IncludeBase<AdditionMediaInfoEntity, MediaFullInfo>();
+
+        CreateMap<SeasonEntity, Season>();
+        CreateMap<Storage.Models.Episode, Episode>()
+            .ForMember(dest => dest.EpisodeNumber, opt => opt.MapFrom(src => src.Number))
+            .ForMember(dest => dest.StreamingUrl, opt => opt.MapFrom(src => src.StreamingUrl))
+            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title));
     }
 }

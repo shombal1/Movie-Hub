@@ -14,8 +14,8 @@ public class MediaFullInfoDto
     public long Views { get; set; }
     public IEnumerable<string> Countries { get; set; } = null!;
     public IEnumerable<string> Genres { get; set; } = null!;
-    public IEnumerable<string> Directors { get; set; } = null!;
-    public IEnumerable<string> Actors { get; set; } = null!;
+    public IEnumerable<BasePersonInfoDto> Directors { get; set; } = null!;
+    public IEnumerable<BasePersonInfoDto> Actors { get; set; } = null!;
     public string AgeRating { get; set; } = "";
     public long? Budget { get; set; }
 }

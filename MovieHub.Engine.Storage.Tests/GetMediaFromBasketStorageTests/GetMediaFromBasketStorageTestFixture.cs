@@ -22,7 +22,6 @@ public class GetMediaFromBasketStorageTestFixture : StorageTestFixture
                 PublishedAt = new DateTimeOffset(new DateTime(2019, 5, 29, 18, 0, 0, DateTimeKind.Utc)),
                 Countries = ["South Korea"],
                 Genres = ["Thriller", "Drama"],
-                Directors = ["Bong Joon-ho"],
                 Quality = "4K"
             },
             new MovieEntity
@@ -35,7 +34,6 @@ public class GetMediaFromBasketStorageTestFixture : StorageTestFixture
                 PublishedAt = new DateTimeOffset(new DateTime(2002, 4, 20, 14, 0, 0, DateTimeKind.Utc)),
                 Countries = ["France", "Germany"],
                 Genres = ["Romance", "Comedy"],
-                Directors = ["Jean-Pierre Jeunet"],
                 Quality = "HD"
             },
             new SeriesEntity
@@ -48,7 +46,6 @@ public class GetMediaFromBasketStorageTestFixture : StorageTestFixture
                 PublishedAt = new DateTimeOffset(new DateTime(2018, 11, 30, 20, 0, 0, DateTimeKind.Utc)),
                 Countries = ["Germany"],
                 Genres = ["Mystery", "Science Fiction"],
-                Directors = ["Baran bo Odar", "Jantje Friese"],
                 CountSeasons = 3,
                 CountEpisodes = 26
             }

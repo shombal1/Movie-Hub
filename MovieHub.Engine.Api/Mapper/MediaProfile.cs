@@ -16,7 +16,6 @@ public class MediaProfile : Profile
             .ForMember(dest => dest.PublishedAt, opt => opt.MapFrom(src => src.PublishedAt))
             .ForMember(dest => dest.Countries, opt => opt.MapFrom(src => src.Countries))
             .ForMember(dest => dest.Genres, opt => opt.MapFrom(src => src.Genres))
-            .ForMember(dest => dest.Directors, opt => opt.MapFrom(src => src.Directors))
             .ForMember(dest => dest.Views, opt => opt.MapFrom(src => src.Views))
             .Include<Movie, MovieDto>()
             .Include<Series, SeriesDto>();

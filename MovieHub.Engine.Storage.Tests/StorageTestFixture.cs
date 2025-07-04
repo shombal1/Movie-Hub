@@ -40,6 +40,7 @@ public class StorageTestFixture : IAsyncLifetime
             NameAdditionMediaInfoCollection = "AdditionMediaInfo",
             NameDomainEventCollection = "DomainEvents",
             NameMovieRequestCollection = "MovieRequests",
+            NamePersonsCollection = "Persons"
         }), new MongoClient(_mongoDbContainer.GetConnectionString()));
     }
 
@@ -118,6 +119,9 @@ public class StorageTestFixture : IAsyncLifetime
 
             db.createCollection("MovieRequests");
             db.MovieRequests.createIndex({_id: 1});
+            
+            db.createCollection("Persons");
+            db.Persons.createIndex({_id: 1});
             """;
 
         await _mongoDbContainer.ExecScriptAsync(initializationScript);

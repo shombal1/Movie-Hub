@@ -22,7 +22,6 @@ public class GetMediaStorageTestFixture : StorageTestFixture
                 PublishedAt = new DateTimeOffset(new DateTime(2019, 5, 29, 18, 0, 0, DateTimeKind.Utc)),
                 Countries = ["South Korea"],
                 Genres = ["Thriller", "Drama"],
-                Directors = ["Bong Joon-ho"],
                 Quality = "4K"
             },
             new MovieEntity
@@ -35,7 +34,6 @@ public class GetMediaStorageTestFixture : StorageTestFixture
                 PublishedAt = new DateTimeOffset(new DateTime(2002, 4, 20, 14, 0, 0, DateTimeKind.Utc)),
                 Countries = ["France", "Germany"],
                 Genres = ["Romance", "Comedy"],
-                Directors = ["Jean-Pierre Jeunet"],
                 Quality = "HD"
             },
             new SeriesEntity
@@ -48,7 +46,6 @@ public class GetMediaStorageTestFixture : StorageTestFixture
                 PublishedAt = new DateTimeOffset(new DateTime(2018, 11, 30, 20, 0, 0, DateTimeKind.Utc)),
                 Countries = ["Germany"],
                 Genres = ["Mystery", "Science Fiction"],
-                Directors = ["Baran bo Odar", "Jantje Friese"],
                 CountSeasons = 3,
                 CountEpisodes = 26
             },
@@ -62,7 +59,6 @@ public class GetMediaStorageTestFixture : StorageTestFixture
                 PublishedAt = new DateTimeOffset(new DateTime(2018, 8, 27, 18, 0, 0, DateTimeKind.Utc)),
                 Countries = ["USA", "Colombia"],
                 Genres = ["Crime", "Drama"],
-                Directors = ["Chris Brancato", "Eric Newman", "Carlo Bernard"],
                 CountSeasons = 3,
                 CountEpisodes = 30
             },
@@ -76,7 +72,6 @@ public class GetMediaStorageTestFixture : StorageTestFixture
                 PublishedAt = new DateTimeOffset(new DateTime(2012, 5, 25, 12, 0, 0, DateTimeKind.Utc)),
                 Countries = ["France"],
                 Genres = ["Drama", "Comedy"],
-                Directors = ["Olivier Nakache", "Éric Toledano"],
                 Quality = "HD"
             },
             new SeriesEntity
@@ -89,7 +84,6 @@ public class GetMediaStorageTestFixture : StorageTestFixture
                 PublishedAt = new DateTimeOffset(new DateTime(2008, 1, 19, 20, 0, 0, DateTimeKind.Utc)),
                 Countries = ["USA"],
                 Genres = ["Drama"],
-                Directors = ["Vince Gilligan"],
                 CountSeasons = 5,
                 CountEpisodes = 62
             },
@@ -104,7 +98,6 @@ public class GetMediaStorageTestFixture : StorageTestFixture
                 PublishedAt = new DateTimeOffset(new DateTime(2010, 7, 15, 18, 0, 0, DateTimeKind.Utc)),
                 Countries = ["USA", "UK"],
                 Genres = ["Thriller", "Science Fiction", "Drama"],
-                Directors = ["Christopher Nolan"],
                 Quality = "4K"
             }
         ]);

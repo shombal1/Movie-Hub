@@ -48,7 +48,7 @@ public class MediaController : ControllerBase
     }
 
     [HttpGet]
-    [Route("v1/media/{mediaId}/full-info")]
+    [Route("v2/media/{mediaId}/full-info")]
     public async Task<IActionResult> GetMediaFullInfo(
         [FromRoute] Guid mediaId, 
         [FromServices] IMapper mapper,

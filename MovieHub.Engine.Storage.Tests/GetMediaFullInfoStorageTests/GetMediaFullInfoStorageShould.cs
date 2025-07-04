@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using MovieHub.Engine.Domain.Models;
+using MovieHub.Engine.Storage.Common;
 using MovieHub.Engine.Storage.Entities;
 using MovieHub.Engine.Storage.Storages;
 
@@ -7,7 +8,7 @@ namespace MovieHub.Engine.Storage.Tests.GetMediaFullInfoStorageTests;
 
 public class GetMediaFullInfoStorageShould(StorageTestFixture fixture) : IClassFixture<StorageTestFixture>
 {
-    private readonly GetMediaFullInfoStorage _sut = new(fixture.GetMovieHubDbContext());
+    private readonly GetMediaFullInfoStorage _sut = new(fixture.GetMovieHubDbContext(), fixture.GetMapper());
 
     [Fact]
     public async Task ReturnNull_WhenPassedIdSeries()
@@ -51,10 +52,18 @@ public class GetMediaFullInfoStorageShould(StorageTestFixture fixture) : IClassF
             PublishedAt = new DateTimeOffset(new DateTime(2019, 5, 29, 18, 0, 0, DateTimeKind.Utc)),
             Countries = ["South Korea"],
             Genres = ["Thriller", "Drama"],
-            Directors = ["Bong Joon-ho"],
+            Directors =
+            [
+                new BasePersonInfo
+                    { FullName = "John Doe", PhotoUrl = "", Professions = [Domain.Enums.ProfessionType.Director] }
+            ],
             Quality = "4K",
             StreamingUrl = "https://test",
-            Actors = ["John Doe"],
+            Actors =
+            [
+                new BasePersonInfo
+                    { FullName = "Bong Joon-ho", PhotoUrl = "", Professions = [Domain.Enums.ProfessionType.Actor] }
+            ],
             Duration = TimeSpan.FromMinutes(132),
             Budget = 15_500_000,
             AgeRating = "R"
@@ -70,18 +79,26 @@ public class GetMediaFullInfoStorageShould(StorageTestFixture fixture) : IClassF
             PublishedAt = new DateTimeOffset(new DateTime(2019, 5, 29, 18, 0, 0, DateTimeKind.Utc)),
             Countries = ["South Korea"],
             Genres = ["Thriller", "Drama"],
-            Directors = ["Bong Joon-ho"],
             Quality = "4K",
         });
 
         await dbContext.AdditionMediaInfo.InsertOneAsync(new AdditionMovieInfoEntity()
         {
             StreamingUrl = "https://test",
-            Actors = ["John Doe"],
+            Actors =
+            [
+                new Storage.Models.BasePersonInfo
+                    { FullName = "Bong Joon-ho", PhotoUrl = "", Professions = [ProfessionType.Actor] }
+            ],
             MediaId = id,
-            Duration = TimeSpan.FromMinutes(132), 
+            Duration = TimeSpan.FromMinutes(132),
             Budget = 15_500_000,
             AgeRating = "R",
+            Directors =
+            [
+                new Storage.Models.BasePersonInfo
+                    { FullName = "John Doe", PhotoUrl = "", Professions = [ProfessionType.Director] }
+            ],
         });
 
         var actor = await _sut.Get(id, CancellationToken.None);
@@ -107,7 +124,6 @@ public class GetMediaFullInfoStorageShould(StorageTestFixture fixture) : IClassF
             PublishedAt = new DateTimeOffset(new DateTime(2019, 5, 29, 18, 0, 0, DateTimeKind.Utc)),
             Countries = ["South Korea"],
             Genres = ["Thriller", "Drama"],
-            Directors = ["Bong Joon-ho"],
             Quality = "4K"
         });
 
@@ -133,8 +149,20 @@ public class GetMediaFullInfoStorageShould(StorageTestFixture fixture) : IClassF
             PublishedAt = new DateTimeOffset(new DateTime(2008, 1, 20, 0, 0, 0, DateTimeKind.Utc)),
             Countries = ["United States"],
             Genres = ["Crime", "Drama", "Thriller"],
-            Directors = ["Vince Gilligan"],
-            Actors = ["Bryan Cranston", "Aaron Paul", "Anna Gunn"],
+            Directors =
+            [
+                new BasePersonInfo
+                    { FullName = "Vince Gilligan", PhotoUrl = "", Professions = [Domain.Enums.ProfessionType.Director] }
+            ],
+            Actors =
+            [
+                new BasePersonInfo
+                    { FullName = "Bryan Cranston", PhotoUrl = "", Professions = [Domain.Enums.ProfessionType.Actor] },
+                new BasePersonInfo
+                    { FullName = "Aaron Paul", PhotoUrl = "", Professions = [Domain.Enums.ProfessionType.Actor] },
+                new BasePersonInfo
+                    { FullName = "Anna Gunn", PhotoUrl = "", Professions = [Domain.Enums.ProfessionType.Actor] }
+            ],
             CountSeasons = 2,
             CountEpisodes = 4,
             Views = 10_000_000,
@@ -198,7 +226,6 @@ public class GetMediaFullInfoStorageShould(StorageTestFixture fixture) : IClassF
             PublishedAt = new DateTimeOffset(new DateTime(2008, 1, 20, 0, 0, 0, DateTimeKind.Utc)),
             Countries = ["United States"],
             Genres = ["Crime", "Drama", "Thriller"],
-            Directors = ["Vince Gilligan"],
             CountSeasons = 2,
             CountEpisodes = 4,
             Views = 10_000_000,
@@ -206,10 +233,23 @@ public class GetMediaFullInfoStorageShould(StorageTestFixture fixture) : IClassF
 
         await dbContext.AdditionMediaInfo.InsertOneAsync(new AdditionSeriesInfoEntity()
         {
-            Actors = ["Bryan Cranston", "Aaron Paul", "Anna Gunn"],
+            Actors =
+            [
+                new Storage.Models.BasePersonInfo
+                    { FullName = "Bryan Cranston", PhotoUrl = "", Professions = [ProfessionType.Actor] },
+                new Storage.Models.BasePersonInfo
+                    { FullName = "Aaron Paul", PhotoUrl = "", Professions = [ProfessionType.Actor] },
+                new Storage.Models.BasePersonInfo
+                    { FullName = "Anna Gunn", PhotoUrl = "", Professions = [ProfessionType.Actor] }
+            ],
             MediaId = seriesId,
             Budget = 3_000_000,
-            AgeRating = "TV-MA"
+            AgeRating = "TV-MA",
+            Directors =
+            [
+                new Storage.Models.BasePersonInfo
+                    { FullName = "Vince Gilligan", PhotoUrl = "", Professions = [ProfessionType.Director] }
+            ],
         });
 
         await dbContext.Seasons.InsertManyAsync([
@@ -265,14 +305,14 @@ public class GetMediaFullInfoStorageShould(StorageTestFixture fixture) : IClassF
         actor.Should().BeOfType<SeriesFullInfo>();
         actor.Should().BeEquivalentTo(expected);
     }
-    
+
     [Fact]
     public async Task ReturnNull_WhenSeriesNotFound()
     {
         Guid invalidId = Guid.Parse("84D1F891-9452-48DA-8F91-A368CB4ED338");
-        
-        var actor = await _sut.Get(invalidId,CancellationToken.None);
-    
+
+        var actor = await _sut.Get(invalidId, CancellationToken.None);
+
         actor.Should().BeNull();
     }
 }

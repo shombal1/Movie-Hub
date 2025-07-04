@@ -20,5 +20,8 @@ public class MediaFullInfoProfile : Profile
 
         CreateMap<Season, SeasonDto>();
         CreateMap<Episode, EpisodeDto>();
+
+        CreateMap<BasePersonInfo, BasePersonInfoDto>();
+        CreateMap<Person, PersonDto>();
     }
 }
