@@ -17,5 +17,14 @@ public class EnumsProfile : Profile
                 Storage.Common.QualityType.K4 => Domain.Enums.QualityType.K4,
                 _ => throw new ArgumentOutOfRangeException(nameof(src), src, "Unexpected quality type")
             });
+        
+        CreateMap<Storage.Common.ProfessionType, Domain.Enums.ProfessionType>()
+            .ConvertUsing((src, destination) => src switch
+            {
+                Storage.Common.ProfessionType.Actor => Domain.Enums.ProfessionType.Actor,
+                Storage.Common.ProfessionType.Director => Domain.Enums.ProfessionType.Director,
+                Storage.Common.ProfessionType.Producer => Domain.Enums.ProfessionType.Producer,
+                _ => throw new ArgumentOutOfRangeException(nameof(src), src, "Unexpected quality type")
+            });
     }
 }

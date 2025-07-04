@@ -11,4 +11,5 @@ public class MongoDbConfigure
     public string NameAdditionMediaInfoCollection { get; set; }
     public string NameDomainEventCollection { get; set; }
     public string NameMovieRequestCollection { get; set; }
+    public string NamePersonsCollection { get; set; }
 }

@@ -14,6 +14,7 @@ using MovieHub.Engine.Domain.UseCases.AddMediaToBasket;
 using MovieHub.Engine.Domain.UseCases.GetMedia;
 using MovieHub.Engine.Domain.UseCases.GetMediaFromBasket;
 using MovieHub.Engine.Domain.UseCases.GetMediaFullInfo;
+using MovieHub.Engine.Domain.UseCases.GetPerson;
 using MovieHub.Engine.Domain.UseCases.IncrementMediaViews;
 using MovieHub.Engine.Domain.UseCases.RemoveMediaFromBasket;
 using MovieHub.Engine.Storage.Common;
@@ -61,6 +62,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<ISetUrlKeyMovieRequestStorage, SetUrlKeyMovieRequestStorage>();
         services.AddScoped<IFinalizeMovieUploadStorage, FinalizeMovieUploadStorage>();
         services.AddScoped<IGetMoviePartUploadUrlStorage, GetMoviePartUploadUrlStorage>();
+        services.AddScoped<IGetPersonStorage, GetPersonStorage>();
         
         services.AddScoped<IDomainEventStorage, DomainEventStorage>();
         

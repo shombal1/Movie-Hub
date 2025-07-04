@@ -16,6 +16,7 @@ public class MovieHubDbContext : IAsyncDisposable
     public IMongoCollection<AdditionMediaInfoEntity> AdditionMediaInfo { get; }
     public IMongoCollection<DomainEvent> DomainEvents { get; }
     public IMongoCollection<MovieRequestEntity> MovieRequests { get; }
+    public IMongoCollection<PersonEntity> Persons { get; }
 
     public IClientSessionHandle CurrentSession { get; }
 
@@ -34,6 +35,7 @@ public class MovieHubDbContext : IAsyncDisposable
         AdditionMediaInfo = Database.GetCollection<AdditionMediaInfoEntity>(configure.NameAdditionMediaInfoCollection);
         DomainEvents = Database.GetCollection<DomainEvent>(configure.NameDomainEventCollection);
         MovieRequests = Database.GetCollection<MovieRequestEntity>(configure.NameMovieRequestCollection);
+        Persons = Database.GetCollection<PersonEntity>(configure.NamePersonsCollection);
     }
 
     public ValueTask DisposeAsync()
