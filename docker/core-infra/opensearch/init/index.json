@@ -1,0 +1,34 @@
+﻿{
+  "mappings": {
+    "properties": {
+      "title": { "type": "text" },
+      "type": { "type": "keyword" },
+      "genre": {
+        "type": "keyword",
+        "index": true
+      },
+      "countries": {
+        "type": "keyword",
+        "index": true
+      },
+      "poster_url": { "type": "keyword" },
+      "ai_description": { "type": "text" },
+      "ai_description_embedding": {
+        "type": "knn_vector",
+        "dimension": 384,
+        "method": {
+          "engine": "lucene",
+          "space_type": "l2",
+          "name": "hnsw",
+          "parameters": {}
+        }
+      }
+    }
+  },
+  "settings": {
+    "index": {
+      "knn": true,
+      "default_pipeline": "ai-description-embedding-pipeline"
+    }
+  }
+}

@@ -165,6 +165,31 @@ services:
     ports:
       - 9200:9200
       - 9600:9600
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+  
+  opensearch-init:
+    container_name: ${COMPOSE_PROJECT_NAME}-opensearch-init
+    image: alpine:latest
+    depends_on:
+      opensearch:
+        condition: service_healthy
+    volumes:
+      - ./opensearch/init:/init
+    command: |
+      sh -c "
+        apk add --no-cache curl jq
+        /init/init.sh
+      "
+    environment:
+      OPENSEARCH_HOST: ${COMPOSE_PROJECT_NAME}-opensearch
+      OPENSEARCH_PORT: 9200
+      OPENSEARCH_ADMIN_PASSWORD: ${OPENSEARCH_ADMIN_PASSWORD}
+  
   
   opensearch-dashboards:
     image: 'opensearchproject/opensearch-dashboards:latest'
