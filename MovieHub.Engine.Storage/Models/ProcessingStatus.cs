@@ -14,6 +14,9 @@ public class ProcessingStatus
     [BsonElement("isQualitiesProcessed")]
     public bool IsQualitiesProcessed { get; set; }
     
+    [BsonElement("aiDescription")]
+    public string? AiDescription { get; set; }
+    
     [BsonElement("isFullyProcessed")]
     public bool IsFullyProcessed { get; set; }
 
