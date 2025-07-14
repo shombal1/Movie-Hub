@@ -27,6 +27,16 @@ public class GetPersonStorage(MovieHubDbContext dbContext, IMapper mapper) : IGe
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<IEnumerable<BasePersonInfo>> GetBaseInfo(int skip, int take, CancellationToken cancellationToken)
+    {
+        return await dbContext.Persons
+            .AsQueryable(dbContext.CurrentSession)
+            .Skip(skip)
+            .Take(take)
+            .ProjectTo<BasePersonInfo>(mapper.ConfigurationProvider)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<IEnumerable<BasePersonInfo>> Get(IEnumerable<Guid> personIds, CancellationToken cancellationToken)
     {
         return await dbContext.Persons
