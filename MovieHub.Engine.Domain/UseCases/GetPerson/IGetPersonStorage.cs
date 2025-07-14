@@ -2,7 +2,7 @@
 
 namespace MovieHub.Engine.Domain.UseCases.GetPerson;
 
-public interface IGetPersonStorage
+public interface IGetPersonStorage : IStorage
 {
     public Task<Person?> Get(Guid id, CancellationToken cancellationToken);
 

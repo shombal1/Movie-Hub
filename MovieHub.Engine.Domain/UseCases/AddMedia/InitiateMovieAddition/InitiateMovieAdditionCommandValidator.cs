@@ -28,15 +28,11 @@ public class InitiateMovieAdditionCommandValidator : AbstractValidator<InitiateM
             .Must(genres => genres.All(g => !string.IsNullOrWhiteSpace(g)))
             .WithErrorCode("Invalid");
 
-        RuleFor(x => x.Directors)
-            .NotEmpty().WithErrorCode("Empty")
-            .Must(directors => directors.All(d => !string.IsNullOrWhiteSpace(d)))
-            .WithErrorCode("Invalid");
+        RuleFor(x => x.DirectorIds)
+            .NotEmpty().WithErrorCode("Empty");
 
-        RuleFor(x => x.Actors)
-            .NotEmpty().WithErrorCode("Empty")
-            .Must(actors => actors.All(a => !string.IsNullOrWhiteSpace(a)))
-            .WithErrorCode("Invalid");
+        RuleFor(x => x.ActorIds)
+            .NotEmpty().WithErrorCode("Empty");
 
         RuleFor(x => x.AgeRating)
             .NotEmpty().WithErrorCode("Empty")

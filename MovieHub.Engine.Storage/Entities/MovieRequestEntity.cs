@@ -17,18 +17,18 @@ public class MovieRequestEntity
     [BsonElement("releasedAt")]
     public DateOnly ReleasedAt { get; set; }
 
-    [BsonElement("publishedAt")]
-    public DateTimeOffset PublishedAt { get; set; }
-
     [BsonElement("countries")]
     public IEnumerable<string> Countries { get; set; } = null!;
 
     [BsonElement("genres")]
     public IEnumerable<string> Genres { get; set; } = null!;
 
+    [BsonElement("actors")]
+    public IEnumerable<Guid> ActorIds { get; set; }= null!;
     [BsonElement("directors")]
-    public IEnumerable<string> Directors { get; set; } = null!;
+    public IEnumerable<Guid> DirectorIds { get; set; } = null!;
     
+    // contain keys for s3 storage
     [BsonElement("originalUrlKey")] 
     [BsonIgnoreIfNull]
     public string? OriginalUrlKey { get; set; }
@@ -36,9 +36,6 @@ public class MovieRequestEntity
     [BsonElement("duration")]
     [BsonIgnoreIfNull]
     public TimeSpan? Duration { get; set; }
-    
-    [BsonElement("actors")]
-    public IEnumerable<string> Actors { get; set; } = null!;
 
     [BsonElement("ageRating")]
     public string AgeRating { get; set; } = "";
@@ -46,8 +43,7 @@ public class MovieRequestEntity
     [BsonElement("budget")]
     [BsonIgnoreIfNull]
     public long? Budget { get; set; }
-
-    // contain keys for s3 storage
+    
     [BsonElement("status")] 
     public ProcessingStatus Status { get; set; } = new ProcessingStatus();
 

@@ -10,31 +10,30 @@ public class InitiateMovieAdditionStorage(
     IGuidFactory guidFactory) 
     : IInitiateMovieAdditionStorage
 {
-    public async Task<Guid> CreateMovieRequest(string title, string description, DateOnly releasedAt, DateTimeOffset publishedAt,
-        IEnumerable<string> countries, IEnumerable<string> genres, IEnumerable<string> directors, IEnumerable<string> actors, string ageRating,
+    public async Task<Guid> CreateMovieRequest(string title, string description, DateOnly releasedAt,
+        IEnumerable<string> countries, IEnumerable<string> genres, IEnumerable<Guid> directorIds, IEnumerable<Guid> actorIds, string ageRating,
         long? budget, CancellationToken cancellationToken)
     {
         var movieRequestId = guidFactory.Create();
-        
+
         var movieRequest = new MovieRequestEntity
         {
             Id = movieRequestId,
             Title = title,
             Description = description,
             ReleasedAt = releasedAt,
-            PublishedAt = publishedAt,
             Countries = countries,
             Genres = genres,
-            Directors = directors,
-            Actors = actors,
+            DirectorIds= directorIds,
+            ActorIds = actorIds,
             AgeRating = ageRating,
             Budget = budget,
             Status = new ProcessingStatus()
         };
-        
+
         await dbContext.MovieRequests.InsertOneAsync(
             dbContext.CurrentSession,
-            movieRequest, 
+            movieRequest,
             cancellationToken: cancellationToken);
 
         return movieRequestId;

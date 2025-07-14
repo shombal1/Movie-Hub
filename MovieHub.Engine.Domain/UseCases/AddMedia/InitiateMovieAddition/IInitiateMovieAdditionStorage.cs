@@ -6,11 +6,10 @@ public interface IInitiateMovieAdditionStorage : IStorage
         string title,
         string description,
         DateOnly releasedAt,
-        DateTimeOffset publishedAt,
         IEnumerable<string> countries,
         IEnumerable<string> genres,
-        IEnumerable<string> directors,
-        IEnumerable<string> actors,
+        IEnumerable<Guid> directorIds,
+        IEnumerable<Guid> actorIds,
         string ageRating,
         long? budget,
         CancellationToken cancellationToken);

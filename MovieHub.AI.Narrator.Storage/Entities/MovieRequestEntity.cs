@@ -27,7 +27,7 @@ public class MovieRequestEntity
     public IEnumerable<string> Genres { get; set; } = null!;
 
     [BsonElement("directors")]
-    public IEnumerable<string> Directors { get; set; } = null!;
+    public IEnumerable<Guid> Directors { get; set; } = null!;
     
     // contain keys for s3 storage
     [BsonElement("originalUrlKey")] 
@@ -39,7 +39,7 @@ public class MovieRequestEntity
     public TimeSpan? Duration { get; set; }
     
     [BsonElement("actors")]
-    public IEnumerable<string> Actors { get; set; } = null!;
+    public IEnumerable<Guid> Actors { get; set; } = null!;
 
     [BsonElement("ageRating")]
     public string AgeRating { get; set; } = "";

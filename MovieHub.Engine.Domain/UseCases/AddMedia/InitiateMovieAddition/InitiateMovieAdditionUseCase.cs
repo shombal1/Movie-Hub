@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
 using MediatR;
 using MovieHub.Engine.Domain.DomainEvents;
+using MovieHub.Engine.Domain.Exceptions;
+using MovieHub.Engine.Domain.UseCases.GetPerson;
 
 namespace MovieHub.Engine.Domain.UseCases.AddMedia.InitiateMovieAddition;
 
@@ -9,26 +11,29 @@ public class InitiateMovieAdditionUseCase(
     IUnitOfWork unitOfWork) 
     : IRequestHandler<InitiateMovieAdditionCommand, Guid>
 {
-    public async Task<Guid> Handle(InitiateMovieAdditionCommand addition, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(InitiateMovieAdditionCommand request, CancellationToken cancellationToken)
     {
-        await validator.ValidateAndThrowAsync(addition, cancellationToken: cancellationToken);
+        await validator.ValidateAndThrowAsync(request, cancellationToken: cancellationToken);
 
         var scope = await unitOfWork.StartScope(ReadPreference.Primary, cancellationToken);
 
         var domainEventStorage = scope.GetStorage<IDomainEventStorage>();
         var createMovieRequestStorage = scope.GetStorage<IInitiateMovieAdditionStorage>();
+        var getPersonStorage = scope.GetStorage<IGetPersonStorage>();
 
+        var personIds = request.ActorIds.Concat(request.DirectorIds).ToArray();
+        await getPersonStorage.ThrowIfPersonsNotFound(personIds, cancellationToken);
+        
         var movieId = await createMovieRequestStorage.CreateMovieRequest(
-            addition.Title,
-            addition.Description,
-            addition.ReleasedAt,
-            addition.PublishedAt,
-            addition.Countries,
-            addition.Genres,
-            addition.Directors,
-            addition.Actors,
-            addition.AgeRating,
-            addition.Budget,
+            request.Title,
+            request.Description,
+            request.ReleasedAt,
+            request.Countries,
+            request.Genres,
+            request.DirectorIds,
+            request.ActorIds,
+            request.AgeRating,
+            request.Budget,
             cancellationToken);
 
         await domainEventStorage.AddEvent(new DomainEventInitiateMovieAddition(movieId), cancellationToken);

@@ -2,6 +2,7 @@
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using MovieHub.Engine.Storage.Entities;
+using MovieHub.Engine.Storage.Models;
 using MovieHub.Engine.Storage.Storages.AddMovie;
 
 namespace MovieHub.Engine.Storage.Tests.FinalizeMovieAdditionStorageTests;
@@ -23,14 +24,16 @@ public class FinalizeMovieAdditionStorageShould(StorageTestFixture fixture) : IC
             Title = "The Shawshank Redemption",
             Description =
                 "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
-            ReleasedAt = new DateOnly(1994, 9, 23),
-            PublishedAt = new DateTimeOffset(2000, 1, 2, 3, 4, 5, 6, 7, TimeSpan.FromHours(1)),
+            ReleasedAt = new DateOnly(1994, 9, 23), 
             Countries = ["USA"],
             Genres = ["Drama"],
-            Directors = ["Frank Darabont"],
+            DirectorIds = [Guid.Parse("6F12D5B9-6CC0-4A9D-A9BF-812E0ED945BB")],
             OriginalUrlKey = "movie",
             Duration = TimeSpan.FromSeconds(1),
-            Actors = ["Tim Robbins", "Morgan Freeman"],
+            ActorIds = [
+                Guid.Parse("68A14E7B-3A33-4D8F-B8E0-B54C8ADCA47B"),
+                Guid.Parse("8D4B2243-508F-4A7F-A43B-4F662D62806E")
+            ],
             AgeRating = "R",
             Budget = 25000000,
         };

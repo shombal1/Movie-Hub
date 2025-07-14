@@ -22,11 +22,10 @@ public class MovieController(IMediator mediator) : ControllerBase
                 requestDto.Title,
                 requestDto.Description,
                 requestDto.ReleasedAt,
-                requestDto.PublishedAt,
                 requestDto.Countries,
                 requestDto.Genres,
-                requestDto.Directors,
-                requestDto.Actors,
+                requestDto.DirectorIds,
+                requestDto.ActorsIds,
                 requestDto.AgeRating,
                 requestDto.Budget));
 
