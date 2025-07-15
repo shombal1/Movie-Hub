@@ -47,6 +47,17 @@ services:
     depends_on:
       - postgres-keycloak
   
+
+  postgres-quartz:
+    image: 'postgres:17.0'
+    container_name: ${COMPOSE_PROJECT_NAME}-postgres-quartz
+    ports:
+      - '5433:5432'
+    environment:
+      POSTGRES_PASSWORD: quartz_password
+      POSTGRES_USER: quartz_user
+      POSTGRES_DB: quartz_db
+  
   zookeeper:
     image: 'confluentinc/cp-zookeeper:7.6.0'
     container_name: ${COMPOSE_PROJECT_NAME}-zookeeper
