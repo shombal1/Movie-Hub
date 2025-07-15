@@ -7,17 +7,24 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="AWSSDK.S3" Version="4.0.4.1" />
-      <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.4" />
-      <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.5" />
-      <PackageReference Include="MongoDB.Driver" Version="3.4.0" />
-      <PackageReference Include="Whisper.net" Version="1.8.1" />
-      <PackageReference Include="Whisper.net.Runtime" Version="1.8.1" />
-      <PackageReference Include="Xabe.FFmpeg" Version="6.0.1" />
+        <PackageReference Include="AppAny.Quartz.EntityFrameworkCore.Migrations" Version="0.5.1"/>
+        <PackageReference Include="AppAny.Quartz.EntityFrameworkCore.Migrations.PostgreSQL" Version="0.5.1"/>
+        <PackageReference Include="Quartz" Version="3.14.0"/>
+        <PackageReference Include="Quartz.AspNetCore" Version="3.14.0"/>
+        <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.14.0"/>
+        <PackageReference Include="Quartz.Serialization.Json" Version="3.14.0"/>
+        <PackageReference Include="AWSSDK.S3" Version="4.0.4.1"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5"/>
+        <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.4"/>
+        <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.5"/>
+        <PackageReference Include="MongoDB.Driver" Version="3.4.0"/>
+        <PackageReference Include="Whisper.net" Version="1.8.1"/>
+        <PackageReference Include="Whisper.net.Runtime" Version="1.8.1"/>
+        <PackageReference Include="Xabe.FFmpeg" Version="6.0.1"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\MovieHub.AI.Narrator.Domain\MovieHub.AI.Narrator.Domain.csproj" />
+        <ProjectReference Include="..\MovieHub.AI.Narrator.Domain\MovieHub.AI.Narrator.Domain.csproj"/>
     </ItemGroup>
 
 </Project>
