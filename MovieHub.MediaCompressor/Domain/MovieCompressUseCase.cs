@@ -33,12 +33,6 @@ public class MovieCompressUseCase: IMovieCompressUseCase
     
     private void CleanupTemporaryFiles()
     {
-        if (!Directory.Exists(_localStoragePath))
-        {
-            Directory.CreateDirectory(_localStoragePath);
-            return;
-        }
-
         foreach (var file in Directory.GetFiles(_localStoragePath))
         {
             try

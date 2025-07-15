@@ -59,4 +59,23 @@ builder.Services.AddHostedService<MediaCompressorConsumer>();
 builder.Services.AddScoped<IMovieCompressUseCase, MovieCompressUseCase>();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var downloadSettings = scope.ServiceProvider.GetRequiredService<IOptions<DownloadSettings>>();
+    var localStoragePath = downloadSettings.Value.LocalStoragePath;
+
+    if (string.IsNullOrWhiteSpace(localStoragePath))
+    {
+        localStoragePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "storage");
+    }
+
+    if (!Directory.Exists(localStoragePath))
+    {
+        Directory.CreateDirectory(localStoragePath);
+    }
+    
+    downloadSettings.Value.LocalStoragePath = localStoragePath;
+}
+
 app.Run();

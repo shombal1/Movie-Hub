@@ -1,7 +1,6 @@
 ﻿using MovieHub.Engine.Domain.Exceptions;
-using MovieHub.Engine.Domain.UseCases.AddMedia.StartMovieUpload;
 
-namespace MovieHub.Engine.Domain.UseCases.AddMedia.FinalizeMovieAddition;
+namespace MovieHub.Engine.Domain.UseCases.AddMedia.StartMovieUpload;
 
 public static class IGetMovieRequestStorageExtensions
 {

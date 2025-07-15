@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using FluentValidation;
+using Microsoft.Extensions.Logging;
 
 namespace MovieHub.AI.Narrator.Domain.UseCases.GenerateMovieDescription;
 
@@ -10,7 +11,8 @@ public class GenerateMediaDescriptionUseCase(
     IGenerateMediaDescriptionStorage generateMediaDescriptionStorage,
     IValidator<GenerateMovieDescriptionCommand> validator,
     IGetGeneratedDescriptionStorage getGeneratedDescriptionStorage,
-    ISetAiDescriptionStorage setAiDescriptionStorage)
+    ISetAiDescriptionStorage setAiDescriptionStorage,
+    ILogger<GenerateMediaDescriptionUseCase> logger)
     : IGenerateMediaDescriptionUseCase
 {
     public async Task GenerateMediaDescription(GenerateMovieDescriptionCommand request,
@@ -23,26 +25,28 @@ public class GenerateMediaDescriptionUseCase(
 
         string pathMedia = "";
         string audioPath = "";
-
+        
         try
         {
-            if (!(await getGeneratedDescriptionStorage.Exists(movieId, cancellationToken)))
+            if (await getGeneratedDescriptionStorage.Exists(movieId, cancellationToken))
+                return;
+
+            pathMedia = await downloadMediaStorage.DownloadMedia(key, cancellationToken);
+            audioPath = await extractAudioStorage.ExtractAudio(pathMedia, cancellationToken);
+
+            var audiText = new StringBuilder();
+
+            await foreach (var segment in mediaTranscriptExtractorStorage.ExtractMediaTranscript(audioPath,
+                               cancellationToken))
             {
-                pathMedia = await downloadMediaStorage.DownloadMedia(key, cancellationToken);
-                audioPath = await extractAudioStorage.ExtractAudio(pathMedia, cancellationToken);
-
-                var audiText = new StringBuilder();
-
-                await foreach (var segment in mediaTranscriptExtractorStorage.ExtractMediaTranscript(audioPath,
-                                   cancellationToken))
-                {
-                    audiText.AppendLine(segment.Text);
-                }
-
-                var promt = await generateMediaDescriptionStorage.Generate(audiText.ToString(), cancellationToken);
-
-                await setAiDescriptionStorage.Set(movieId, promt, cancellationToken);
+                logger.LogInformation("Processing segment: {Start} - {End}. text: {Text}", segment.Start, segment.End,
+                    segment.Text);
+                audiText.AppendLine(segment.Text);
             }
+
+            var promt = await generateMediaDescriptionStorage.Generate(audiText.ToString(), cancellationToken);
+
+            await setAiDescriptionStorage.Set(movieId, promt, cancellationToken);
         }
         finally
         {
@@ -52,18 +56,15 @@ public class GenerateMediaDescriptionUseCase(
 
     private void CleanupTempFiles(string mediaPath, string audioPath)
     {
-        try
-        {
-            File.Delete(mediaPath);
-        }
-        catch
-        {
-            // ignored
-        }
+        TryDeleteFile(mediaPath);
+        TryDeleteFile(audioPath);
+    }
 
+    private static void TryDeleteFile(string filePath)
+    {
         try
         {
-            File.Delete(audioPath);
+            File.Delete(filePath);
         }
         catch
         {

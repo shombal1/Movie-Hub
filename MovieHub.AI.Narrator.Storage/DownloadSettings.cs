@@ -1,4 +1,4 @@
-﻿namespace MovieHub.MediaCompressor;
+﻿namespace MovieHub.AI.Narrator.Storage;
 
 public class DownloadSettings
 {

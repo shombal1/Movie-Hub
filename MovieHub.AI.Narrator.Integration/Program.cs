@@ -38,6 +38,23 @@ builder.Services.AddQuartz(q =>
 builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
 var app = builder.Build();
-app.MapGet("/", () => "Hello World!");
+
+using (var scope = app.Services.CreateScope())
+{
+    var downloadSettings = scope.ServiceProvider.GetRequiredService<IOptions<DownloadSettings>>();
+    var localStoragePath = downloadSettings.Value.LocalStoragePath;
+
+    if (string.IsNullOrWhiteSpace(localStoragePath))
+    {
+        localStoragePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "temp_storage");
+    }
+
+    if (!Directory.Exists(localStoragePath))
+    {
+        Directory.CreateDirectory(localStoragePath);
+    }
+    
+    downloadSettings.Value.LocalStoragePath = localStoragePath;
+}
 
 app.Run();

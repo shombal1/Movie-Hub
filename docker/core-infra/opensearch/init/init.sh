@@ -3,6 +3,33 @@
 USER="admin"
 PASS="${OPENSEARCH_ADMIN_PASSWORD}"
 HOST="${OPENSEARCH_HOST}:${OPENSEARCH_PORT}"
+INDEX_NAME="${OPENSEARCH_INDEX_NAME:-movie-hub}"
+
+echo "Checking if index '$INDEX_NAME' exists..."
+
+index_check=$(curl -u "$USER:$PASS" \
+    --connect-timeout 10 \
+    --max-time 30 \
+    -s \
+    -o /dev/null \
+    -w "%{http_code}" \
+    -XGET "http://$HOST/$INDEX_NAME" 2>/dev/null)
+
+echo "HTTP response code: $index_check"
+
+case "$index_check" in
+    200)
+        echo "Index '$INDEX_NAME' already exists, skipping initialization."
+        exit 0
+        ;;
+    404)
+        echo "Index '$INDEX_NAME' does not exist, proceeding with initialization."
+        ;;
+    *)
+        echo "Unexpected response code: $index_check. Checking OpenSearch status..."
+        exit 1
+        ;;
+esac
 
 curl -u $USER:"$PASS" -XPUT "http://$HOST/_cluster/settings" \
      -H 'Content-Type: application/json' \
@@ -67,8 +94,8 @@ curl -u $USER:"$PASS" -XPUT "http://$HOST/_ingest/pipeline/ai-description-embedd
 }
 EOF
 
-echo "Creating index..."
-curl -u $USER:"$PASS" -XPUT "http://$HOST/movie-hub" \
+echo "Creating index '$INDEX_NAME'..."
+curl -u $USER:"$PASS" -XPUT "http://$HOST/$INDEX_NAME" \
      -H "Content-Type: application/json" \
      -d @/init/index.json
 

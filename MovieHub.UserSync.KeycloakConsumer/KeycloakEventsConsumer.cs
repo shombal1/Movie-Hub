@@ -22,9 +22,9 @@ public class KeycloakEventsConsumer(
         try
         {
             await Task.Yield();
-        
+
             consumer.Subscribe(_topicName);
-        
+
             while (!stoppingToken.IsCancellationRequested)
             {
                 var consumerResult = consumer.Consume(stoppingToken);
@@ -56,12 +56,14 @@ public class KeycloakEventsConsumer(
 
                 consumer.Commit(consumerResult);
             }
-
-            consumer.Close();
         }
         catch (Exception e)
         {
             logger.LogError(e, "Error occurred during consumption");
+        }
+        finally
+        {
+            consumer.Close();
         }
        
     }
