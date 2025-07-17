@@ -20,8 +20,8 @@ public class MediaEventsConsumer(
     private readonly ConsumerConfig _consumerConfig = options.Value;
     private readonly string _topicName = kafkaTopicOptions.Value.Name;
     private readonly int _maxConcurrentJobs = backgroundJobOptions.Value.MaxConcurrentJobs;
-
-    public const string JobGroupName = "narrator-group";
+    
+    public const string JobGroupName = NarratorJobBuilder.JobGroupName;
     public const string ProcessedMediaPrefix = "processed_media_";
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -101,27 +101,8 @@ public class MediaEventsConsumer(
                 continue;
             }
 
-            Guid jobId = Guid.NewGuid();
-
-            var jobKey = new JobKey($"{JobGroupName}-job-{jobId}", JobGroupName);
-
-            var job = JobBuilder.Create<BackgroundNarratorJob>()
-                .WithIdentity(jobKey)
-                .UsingJobData(new JobDataMap()
-                {
-                    ["movieRequestId"] = movieRequestId.ToString(),
-                    ["s3Key"] = key
-                })
-                .StoreDurably()
-                .RequestRecovery()
-                .Build();
-
-            var trigger = TriggerBuilder.Create()
-                .WithIdentity($"{JobGroupName}-trigger-{jobId}", JobGroupName)
-                .StartNow()
-                .Build();
-
-            await scheduler.ScheduleJob(job, trigger,  stoppingToken);
+            var (job, trigger) = NarratorJobBuilder.CreateJobWithTrigger(movieRequestId, key);
+            await scheduler.ScheduleJob(job, trigger, stoppingToken);
 
             logger.LogInformation("complete record {NumberRecord}", numberRecord);
         }
