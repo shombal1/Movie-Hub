@@ -1,12 +1,18 @@
+using System.Reflection;
 using Confluent.Kafka;
 using Microsoft.Extensions.Options;
 using MovieHub.AI.Narrator.Domain.DependencyInjection;
 using MovieHub.AI.Narrator.Integration;
+using MovieHub.AI.Narrator.Integration.Mapping;
 using MovieHub.AI.Narrator.Storage;
 using MovieHub.AI.Narrator.Storage.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
+
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddDomainServices();
 builder.Services.AddStorageServices(
@@ -37,10 +43,17 @@ builder.Services.AddStackExchangeRedisCache(options =>
 
 builder.Services.AddHybridCache();
 
-
 builder.Services.AddHostedService<MediaEventsConsumer>();
 
+builder.Services.AddAutoMapper(conf => conf.AddMaps(Assembly.GetAssembly(typeof(FailedNarratorJobProfile))));
+
+
 var app = builder.Build();
+
+app.UseSwagger();
+app.UseSwaggerUI();
+
+app.MapControllers();
 
 using (var scope = app.Services.CreateScope())
 {
