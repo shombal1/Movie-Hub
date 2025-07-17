@@ -2,6 +2,7 @@
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using MovieHub.AI.Narrator.Domain.UseCases.GenerateMovieDescription;
+using MovieHub.AI.Narrator.Domain.UseCases.GetFailedNarratorJobs;
 
 namespace MovieHub.AI.Narrator.Domain.DependencyInjection;
 
@@ -13,6 +14,7 @@ public static class ServiceCollectionExtension
         
         services.AddScoped<IGenerateMediaDescriptionUseCase, GenerateMediaDescriptionUseCase>();
 
+        services.AddScoped<IGetFailedNarratorJobsUseCase, GetFailedNarratorJobsUseCase>();
         return services;
     }
 }

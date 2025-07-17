@@ -1,9 +1,11 @@
-﻿using Amazon.S3;
+﻿using System.Reflection;
+using Amazon.S3;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using MovieHub.AI.Narrator.Domain.Jobs;
 using MovieHub.AI.Narrator.Domain.UseCases.GenerateMovieDescription;
+using MovieHub.AI.Narrator.Domain.UseCases.GetFailedNarratorJobs;
 using MovieHub.AI.Narrator.Storage.Storages;
 using Quartz;
 using Quartz.Impl.AdoJobStore;
@@ -20,10 +22,10 @@ public static class ServiceCollectionExtension
         string quartzPostgresConnectionString)
     {
         GlobalMongoSetting.Configure();
-        
+
         services.AddSingleton<IMongoClient>(_ => new MongoClient(mongoDbConnectionString));
         services.AddSingleton<MovieHubDbContext>();
-        
+
         services.AddSingleton<IAmazonS3>(sp =>
         {
             var config = new AmazonS3Config
@@ -42,16 +44,16 @@ public static class ServiceCollectionExtension
 
             return client;
         });
-        
+
         services.AddQuartz(q =>
         {
             q.UseSimpleTypeLoader();
             q.UseDefaultThreadPool(tp => { tp.MaxConcurrency = 3; });
-    
+
             q.UsePersistentStore(s =>
             {
                 var connectionString = quartzPostgresConnectionString;
-        
+
                 s.PerformSchemaValidation = true;
                 s.UseProperties = true;
                 s.RetryInterval = TimeSpan.FromSeconds(15);
@@ -74,7 +76,7 @@ public static class ServiceCollectionExtension
 
         services.AddDbContext<QuartzDbContext>(options =>
             options.UseNpgsql(quartzPostgresConnectionString));
-        
+
         services.AddSingleton<IS3StorageService, S3StorageService>();
 
         services.AddHttpClient();
@@ -84,7 +86,7 @@ public static class ServiceCollectionExtension
 
         services.AddSingleton<IGuidFactory, GuidFactory>();
         services.AddSingleton<TimeProvider>(x => TimeProvider.System);
-        
+
         services.AddScoped<IDownloadMediaStorage, DownloadMediaStorage>();
         services.AddScoped<IExtractAudioStorage, ExtractAudioStorage>();
         services.AddScoped<IGenerateMediaDescriptionStorage, GenerateMediaDescriptionStorage>();
@@ -93,6 +95,10 @@ public static class ServiceCollectionExtension
         services.AddScoped<ISetAiDescriptionStorage, SetAiDescriptionStorage>();
         services.AddScoped<ICreateFailedNarratorJob, CreateFailedNarratorJob>();
         
+        services.AddScoped<IGetFailedNarratorJobStorage, GetFailedNarratorJobStorage>();
+        
+        services.AddAutoMapper(conf => conf.AddMaps(Assembly.GetAssembly(typeof(FailedNarratorJobProfile))));
+
         return services;
     }
 }
