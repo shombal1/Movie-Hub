@@ -3,11 +3,11 @@ using MovieHub.AI.Narrator.Storage.QuartzEntities;
 
 namespace MovieHub.AI.Narrator.Storage.Storages;
 
-public class CreateFailedNarratorJob(
+public class CreateFailedNarratorJobStorage(
     QuartzDbContext dbContext,
     IGuidFactory guidFactory,
     TimeProvider timeProvider) 
-    : ICreateFailedNarratorJob
+    : ICreateFailedNarratorJobStorage
 {
     public async Task<Guid> Create(string jobName, string jobGroup, Guid mediaId, string? s3Key, string errorMessage)
     {

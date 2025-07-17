@@ -33,7 +33,7 @@ public class BackgroundNarratorJob(
             await using var scope = scopeFactory.CreateAsyncScope();
             var provider = scope.ServiceProvider;
             
-            var storage = provider.GetRequiredService<ICreateFailedNarratorJob>();
+            var storage = provider.GetRequiredService<ICreateFailedNarratorJobStorage>();
             var jobName = context.JobDetail.Key.Name;
             var jobGroup = context.JobDetail.Key.Group;
             string message = ErrorMessageConverterNarratorJob.ConvertToHumanReadableMessage(ex);

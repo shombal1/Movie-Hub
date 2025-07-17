@@ -1,6 +1,6 @@
 ﻿namespace MovieHub.AI.Narrator.Domain.Jobs;
 
-public interface ICreateFailedNarratorJob
+public interface ICreateFailedNarratorJobStorage
 {
     public Task<Guid> Create(
         string jobName,
