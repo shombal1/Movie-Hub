@@ -26,6 +26,9 @@ public class BackgroundNarratorJob(
             await generateMediaDescriptionUseCase.GenerateMediaDescription(
                 command,
                 context.CancellationToken);
+            
+            var deleteFailedNarratorJobStorage = provider.GetRequiredService<IDeleteFailedNarratorJobStorage>();
+            await deleteFailedNarratorJobStorage.Delete(mediaId, context.CancellationToken);
         }
         catch (Exception ex)
         {

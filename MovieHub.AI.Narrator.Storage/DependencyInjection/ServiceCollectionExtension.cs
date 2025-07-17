@@ -6,6 +6,8 @@ using MongoDB.Driver;
 using MovieHub.AI.Narrator.Domain.Jobs;
 using MovieHub.AI.Narrator.Domain.UseCases.GenerateMovieDescription;
 using MovieHub.AI.Narrator.Domain.UseCases.GetFailedNarratorJobs;
+using MovieHub.AI.Narrator.Domain.UseCases.RetryFailedNarratorJob;
+using MovieHub.AI.Narrator.Storage.Mapping;
 using MovieHub.AI.Narrator.Storage.Storages;
 using Quartz;
 using Quartz.Impl.AdoJobStore;
@@ -93,9 +95,10 @@ public static class ServiceCollectionExtension
         services.AddScoped<IGetGeneratedDescriptionStorage, GetGeneratedDescriptionStorage>();
         services.AddScoped<IMediaTranscriptExtractorStorage, MediaTranscriptExtractorStorage>();
         services.AddScoped<ISetAiDescriptionStorage, SetAiDescriptionStorage>();
-        services.AddScoped<ICreateFailedNarratorJob, CreateFailedNarratorJob>();
-        
+        services.AddScoped<ICreateFailedNarratorJobStorage, CreateFailedNarratorJobStorage>();
         services.AddScoped<IGetFailedNarratorJobStorage, GetFailedNarratorJobStorage>();
+        services.AddScoped<IFailedNarratorMarkAsRetriedStorage, FailedNarratorMarkAsRetriedStorage>();
+        services.AddScoped<IDeleteFailedNarratorJobStorage, DeleteFailedNarratorJobStorage>();
         
         services.AddAutoMapper(conf => conf.AddMaps(Assembly.GetAssembly(typeof(FailedNarratorJobProfile))));
 
