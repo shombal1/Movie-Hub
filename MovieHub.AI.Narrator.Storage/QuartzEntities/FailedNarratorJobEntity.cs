@@ -26,8 +26,6 @@ public class FailedNarratorJobEntity
     
     public DateTimeOffset FailedAt { get; set; }
     
-    public int RetryCount { get; set; }
-    
     public bool IsRetried { get; set; }
     
 }

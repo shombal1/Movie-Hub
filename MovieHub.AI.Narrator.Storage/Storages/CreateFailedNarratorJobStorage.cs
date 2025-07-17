@@ -21,7 +21,6 @@ public class CreateFailedNarratorJob(
             S3Key = s3Key,
             ErrorMessage = errorMessage,
             FailedAt = timeProvider.GetUtcNow(),
-            RetryCount = 0,
             IsRetried = false
         };
 
