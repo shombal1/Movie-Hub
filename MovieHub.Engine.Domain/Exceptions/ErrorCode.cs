@@ -2,6 +2,7 @@
 
 public enum ErrorCode
 {
-    Gone = 400,
-    Conflict = 409
+    Gone = 410,
+    Conflict = 409,
+    BadRequest = 400,
 }

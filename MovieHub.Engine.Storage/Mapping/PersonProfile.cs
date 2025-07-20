@@ -13,5 +13,7 @@ public class PersonProfile : Profile
         CreateMap<PersonEntity, BasePersonInfo>();
 
         CreateMap<Models.BasePersonInfo, BasePersonInfo>();
+
+        CreateMap<PersonEntity, Models.BasePersonInfo>();
     }
 }

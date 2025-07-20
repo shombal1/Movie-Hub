@@ -8,6 +8,7 @@ public class ProcessingStatus
     
     public Dictionary<QualityType, string> ProcessedQualities { get; set; } = new();
     
+    public string? AiDescription { get; set; }
     public bool IsQualitiesProcessed { get; set; }
     
     public bool IsFullyProcessed { get; set; }

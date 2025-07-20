@@ -6,6 +6,7 @@ using MovieHub.Engine.Domain.UseCases.AddMedia.FinalizeMovieAddition;
 using MovieHub.Engine.Domain.UseCases.AddMedia.FinalizeMovieUpload;
 using MovieHub.Engine.Domain.UseCases.AddMedia.GetMoviePartUploadUrl;
 using MovieHub.Engine.Domain.UseCases.AddMedia.InitiateMovieAddition;
+using MovieHub.Engine.Domain.UseCases.AddMedia.PublishMovieRequest;
 using MovieHub.Engine.Domain.UseCases.AddMedia.StartMovieUpload;
 
 namespace MovieHub.Engine.Api.Controllers;
@@ -87,5 +88,12 @@ public class MovieController(IMediator mediator) : ControllerBase
         return Ok();
     }
     
-    
+    [HttpPost]
+    [Route("{requestId}/publish")]
+    public async Task<IActionResult> PublishMovie(Guid requestId)
+    {
+        await mediator.Send(new PublishMovieRequestCommand(requestId));
+
+        return Ok();
+    }
 }

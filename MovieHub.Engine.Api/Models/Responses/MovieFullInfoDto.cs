@@ -6,5 +6,7 @@ namespace MovieHub.Engine.Api.Models.Responses;
 [JsonDerivedType(typeof(MovieFullInfoDto), "movie")] 
 public class MovieFullInfoDto : MediaFullInfoDto
 {
+    public string AiDescription { get; set; } = "";
+    
     public Dictionary<QualityType, string> AvailableQualities { get; set; } = new();
 }

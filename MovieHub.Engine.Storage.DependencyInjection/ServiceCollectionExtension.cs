@@ -9,6 +9,7 @@ using MovieHub.Engine.Domain.UseCases.AddMedia.FinalizeMovieAddition;
 using MovieHub.Engine.Domain.UseCases.AddMedia.FinalizeMovieUpload;
 using MovieHub.Engine.Domain.UseCases.AddMedia.GetMoviePartUploadUrl;
 using MovieHub.Engine.Domain.UseCases.AddMedia.InitiateMovieAddition;
+using MovieHub.Engine.Domain.UseCases.AddMedia.PublishMovieRequest;
 using MovieHub.Engine.Domain.UseCases.AddMedia.StartMovieUpload;
 using MovieHub.Engine.Domain.UseCases.AddMediaToBasket;
 using MovieHub.Engine.Domain.UseCases.GetMedia;
@@ -34,10 +35,10 @@ public static class ServiceCollectionExtension
         string s3StorageConnectionString)
     {
         GlobalMongoSetting.Configure();
-        
+
         services.AddSingleton<IMongoClient>(_ => new MongoClient(contextConnectionString));
         services.AddScoped<MovieHubDbContext>();
-        
+
         services.AddSingleton<IConnectionMultiplexer>(
             ConnectionMultiplexer.Connect(cashConnectionString));
         services.AddScoped<IDatabase>(sp =>
@@ -45,13 +46,13 @@ public static class ServiceCollectionExtension
             var multiplexer = sp.GetRequiredService<IConnectionMultiplexer>();
             return multiplexer.GetDatabase();
         });
-        
-        services.AddScoped<IGetMediaStorage,GetMediaStorage>();
+
+        services.AddScoped<IGetMediaStorage, GetMediaStorage>();
         services.AddScoped<ITryAddMediaToBasketStorage, TryAddMediaToBasketStorage>();
-        services.AddScoped<IGetMediaFromBasketStorage,GetMediaFromBasketStorage>();
+        services.AddScoped<IGetMediaFromBasketStorage, GetMediaFromBasketStorage>();
         services.AddScoped<IRemoveMediaFromBasketStorage, RemoveMediaFromBasketStorage>();
         services.AddScoped<IGetMediaIdsStorage, GetMediaIdsStorage>();
-        services.AddScoped<IIncrementMediaViewsStorage,IncrementMediaViewsStorage>();
+        services.AddScoped<IIncrementMediaViewsStorage, IncrementMediaViewsStorage>();
         services.AddScoped<IPushMediaViewsStorage, PushMediaViewsStorage>();
         services.AddScoped<IPopMediaViewsStorage, PopMediaViewsStorage>();
         services.AddScoped<IGetMediaFullInfoStorage, GetMediaFullInfoStorage>();
@@ -63,11 +64,12 @@ public static class ServiceCollectionExtension
         services.AddScoped<IFinalizeMovieUploadStorage, FinalizeMovieUploadStorage>();
         services.AddScoped<IGetMoviePartUploadUrlStorage, GetMoviePartUploadUrlStorage>();
         services.AddScoped<IGetPersonStorage, GetPersonStorage>();
-        
+        services.AddScoped<ICreateMovieStorage, CreateMovieStorage>();
+
         services.AddScoped<IDomainEventStorage, DomainEventStorage>();
-        
+
         services.AddScoped<ISeedGenerator, SeedGenerator>();
-        
+
         services.AddSingleton<IUnitOfWork, UnitOfWork>();
         services.AddSingleton<IGuidFactory, GuidFactory>();
         services.AddSingleton<TimeProvider>(factory => TimeProvider.System);
@@ -75,7 +77,8 @@ public static class ServiceCollectionExtension
         {
             var config = new AmazonS3Config
             {
-                ServiceURL = s3StorageConnectionString.Split(';').First(x => x.StartsWith("Endpoint=")).Replace("Endpoint=", ""),
+                ServiceURL = s3StorageConnectionString.Split(';').First(x => x.StartsWith("Endpoint="))
+                    .Replace("Endpoint=", ""),
                 ForcePathStyle = true,
                 UseHttp = true
             };
@@ -91,7 +94,7 @@ public static class ServiceCollectionExtension
         services.AddSingleton<IS3FileUploadService, S3FileUploadService>();
 
         services.AddAutoMapper(conf => conf.AddMaps(Assembly.GetAssembly(typeof(MediaProfile))));
-        
+
         return services;
     }
 }
