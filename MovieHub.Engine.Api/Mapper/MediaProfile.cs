@@ -21,7 +21,6 @@ public class MediaProfile : Profile
             .Include<Series, SeriesDto>();
 
         CreateMap<Movie, MovieDto>()
-            .ForMember(dest => dest.Quality, opt => opt.MapFrom(src => src.Quality))
             .IncludeBase<Media, MediaDto>();
 
         CreateMap<Series, SeriesDto>()

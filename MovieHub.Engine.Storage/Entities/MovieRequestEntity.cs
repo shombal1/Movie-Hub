@@ -32,10 +32,6 @@ public class MovieRequestEntity
     [BsonElement("originalUrlKey")] 
     [BsonIgnoreIfNull]
     public string? OriginalUrlKey { get; set; }
-    
-    [BsonElement("duration")]
-    [BsonIgnoreIfNull]
-    public TimeSpan? Duration { get; set; }
 
     [BsonElement("ageRating")]
     public string AgeRating { get; set; } = "";

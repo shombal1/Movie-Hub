@@ -21,8 +21,7 @@ public class GetMediaFromBasketStorageTestFixture : StorageTestFixture
                 ReleasedYearAt = 2019,
                 PublishedAt = new DateTimeOffset(new DateTime(2019, 5, 29, 18, 0, 0, DateTimeKind.Utc)),
                 Countries = ["South Korea"],
-                Genres = ["Thriller", "Drama"],
-                Quality = "4K"
+                Genres = ["Thriller", "Drama"]
             },
             new MovieEntity
             {
@@ -33,8 +32,7 @@ public class GetMediaFromBasketStorageTestFixture : StorageTestFixture
                 ReleasedYearAt = 2001,
                 PublishedAt = new DateTimeOffset(new DateTime(2002, 4, 20, 14, 0, 0, DateTimeKind.Utc)),
                 Countries = ["France", "Germany"],
-                Genres = ["Romance", "Comedy"],
-                Quality = "HD"
+                Genres = ["Romance", "Comedy"]
             },
             new SeriesEntity
             {

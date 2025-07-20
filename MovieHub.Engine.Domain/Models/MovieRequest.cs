@@ -19,8 +19,6 @@ public class MovieRequest
 
     public string? OriginalUrlKey { get; set; }
 
-    public TimeSpan? Duration { get; set; }
-
     public IEnumerable<Guid> ActorIds { get; set; } = null!;
 
     public string AgeRating { get; set; } = "";

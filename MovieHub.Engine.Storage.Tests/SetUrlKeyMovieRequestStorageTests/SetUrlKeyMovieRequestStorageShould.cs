@@ -30,7 +30,6 @@ public class SetUrlKeyMovieRequestStorageShould(StorageTestFixture fixture) : IC
             Genres = ["Drama"],
             DirectorIds  = [Guid.Parse("6F12D5B9-6CC0-4A9D-A9BF-812E0ED945BB")],
             OriginalUrlKey = "movie",
-            Duration = TimeSpan.FromSeconds(1),
             ActorIds = [
                 Guid.Parse("68A14E7B-3A33-4D8F-B8E0-B54C8ADCA47B"),
                 Guid.Parse("8D4B2243-508F-4A7F-A43B-4F662D62806E")

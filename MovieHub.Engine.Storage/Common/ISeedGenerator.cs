@@ -116,8 +116,7 @@ public class SeedGenerator(MovieHubDbContext dbContext) : ISeedGenerator
                 PublishedAt = new DateTimeOffset(2010, 7, 20, 10, 30, 0, TimeSpan.Zero),
                 Countries = ["USA", "UK"],
                 Genres = ["Sci-Fi", "Action", "Thriller"],
-                Views = 5000,
-                Quality = "1080p"
+                Views = 5000
             },
             new MovieEntity
             {
@@ -131,7 +130,6 @@ public class SeedGenerator(MovieHubDbContext dbContext) : ISeedGenerator
                 Countries = ["USA", "UK"],
                 Genres = ["Action", "Crime", "Drama"],
                 Views = 1000,
-                Quality = "4K",
             },
             new SeriesEntity
             {
@@ -179,8 +177,10 @@ public class SeedGenerator(MovieHubDbContext dbContext) : ISeedGenerator
                         Professions = [ProfessionType.Actor]
                     }
                 ],
-                StreamingUrl = "https://example.com/inception",
-                Duration = TimeSpan.FromMinutes(148),
+                AvailableQualities = new Dictionary<QualityType, string>()
+                {
+                    { QualityType.P360 , "inception"}   
+                },
                 Budget = 160_000_000,
                 AgeRating = "PG-13",
                 Directors =
@@ -205,8 +205,10 @@ public class SeedGenerator(MovieHubDbContext dbContext) : ISeedGenerator
                         Professions = [ProfessionType.Actor]
                     }
                 ],
-                StreamingUrl = "https://example.com/dark-knight",
-                Duration = TimeSpan.FromMinutes(152),
+                AvailableQualities = new Dictionary<QualityType, string>()
+                {
+                    { QualityType.P360 , "dark-knight"}   
+                },
                 Budget = 185_000_000,
                 AgeRating = "PG-13",
                 Directors =

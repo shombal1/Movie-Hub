@@ -21,8 +21,7 @@ public class GetMediaStorageTestFixture : StorageTestFixture
                 ReleasedYearAt = 2019,
                 PublishedAt = new DateTimeOffset(new DateTime(2019, 5, 29, 18, 0, 0, DateTimeKind.Utc)),
                 Countries = ["South Korea"],
-                Genres = ["Thriller", "Drama"],
-                Quality = "4K"
+                Genres = ["Thriller", "Drama"]
             },
             new MovieEntity
             {
@@ -33,8 +32,7 @@ public class GetMediaStorageTestFixture : StorageTestFixture
                 ReleasedYearAt = 2001,
                 PublishedAt = new DateTimeOffset(new DateTime(2002, 4, 20, 14, 0, 0, DateTimeKind.Utc)),
                 Countries = ["France", "Germany"],
-                Genres = ["Romance", "Comedy"],
-                Quality = "HD"
+                Genres = ["Romance", "Comedy"]
             },
             new SeriesEntity
             {
@@ -71,8 +69,7 @@ public class GetMediaStorageTestFixture : StorageTestFixture
                 ReleasedYearAt = 2011,
                 PublishedAt = new DateTimeOffset(new DateTime(2012, 5, 25, 12, 0, 0, DateTimeKind.Utc)),
                 Countries = ["France"],
-                Genres = ["Drama", "Comedy"],
-                Quality = "HD"
+                Genres = ["Drama", "Comedy"]
             },
             new SeriesEntity
             {
@@ -97,8 +94,7 @@ public class GetMediaStorageTestFixture : StorageTestFixture
                 ReleasedYearAt = 2010,
                 PublishedAt = new DateTimeOffset(new DateTime(2010, 7, 15, 18, 0, 0, DateTimeKind.Utc)),
                 Countries = ["USA", "UK"],
-                Genres = ["Thriller", "Science Fiction", "Drama"],
-                Quality = "4K"
+                Genres = ["Thriller", "Science Fiction", "Drama"]
             }
         ]);
     }

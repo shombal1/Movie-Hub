@@ -21,7 +21,6 @@ public class MediaProfile : Profile
             .Include<SeriesEntity, Series>();
 
         CreateMap<MovieEntity, Movie>()
-            .ForMember(dest => dest.Quality, opt => opt.MapFrom(src => src.Quality))
             .IncludeBase<MediaEntity, Media>();
 
         CreateMap<SeriesEntity, Series>()
@@ -52,9 +51,8 @@ public class MediaProfile : Profile
             .Include<AdditionSeriesInfoEntity, SeriesFullInfo>();
 
         CreateMap<AdditionMovieInfoEntity, MovieFullInfo>()
-            .ForMember(dest => dest.Quality, opt => opt.MapFrom(src => ((MovieEntity)src.MainInfo).Quality))
-            .ForMember(dest => dest.StreamingUrl, opt => opt.MapFrom(src => src.StreamingUrl))
-            .ForMember(dest => dest.Duration, opt => opt.MapFrom(src => src.Duration))
+            .ForMember(dest => dest.AvailableQualities, opt => opt.MapFrom(src => src.AvailableQualities))
+            .ForMember(dest => dest.AvailableQualities, opt => opt.MapFrom(src => src.AvailableQualities))
             .IncludeBase<AdditionMediaInfoEntity, MediaFullInfo>();
 
         CreateMap<AdditionSeriesInfoEntity, SeriesFullInfo>()

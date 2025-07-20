@@ -28,8 +28,7 @@ public class RemoveMediaFromBasketStorageShould(StorageTestFixture fixture) : IC
             ReleasedYearAt = 2019,
             PublishedAt = new DateTimeOffset(new DateTime(2019, 5, 29, 18, 0, 0, DateTimeKind.Utc)),
             Countries = ["South Korea"],
-            Genres = ["Thriller", "Drama"],
-            Quality = "4K"
+            Genres = ["Thriller", "Drama"]
         };
 
         await dbContext.Media.InsertOneAsync(media);
@@ -72,8 +71,7 @@ public class RemoveMediaFromBasketStorageShould(StorageTestFixture fixture) : IC
             ReleasedYearAt = 2019,
             PublishedAt = new DateTimeOffset(new DateTime(2019, 5, 29, 18, 0, 0, DateTimeKind.Utc)),
             Countries = ["South Korea"],
-            Genres = ["Thriller", "Drama"],
-            Quality = "4K"
+            Genres = ["Thriller", "Drama"]
         };
 
         await dbContext.Media.InsertOneAsync(media);

@@ -1,11 +1,10 @@
 ﻿using System.Text.Json.Serialization;
+using MovieHub.Engine.Api.Enums;
 
 namespace MovieHub.Engine.Api.Models.Responses;
 
 [JsonDerivedType(typeof(MovieFullInfoDto), "movie")] 
 public class MovieFullInfoDto : MediaFullInfoDto
 {
-    public string Quality { get; set; } = "";
-    public string StreamingUrl { get; set; } = "";
-    public TimeSpan Duration { get; set; } 
+    public Dictionary<QualityType, string> AvailableQualities { get; set; } = new();
 }

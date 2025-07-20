@@ -3,6 +3,7 @@ using MovieHub.Engine.Domain.Models;
 using MovieHub.Engine.Storage.Common;
 using MovieHub.Engine.Storage.Entities;
 using MovieHub.Engine.Storage.Storages;
+using QualityType = MovieHub.Engine.Domain.Enums.QualityType;
 
 namespace MovieHub.Engine.Storage.Tests.GetMediaFullInfoStorageTests;
 
@@ -57,14 +58,15 @@ public class GetMediaFullInfoStorageShould(StorageTestFixture fixture) : IClassF
                 new BasePersonInfo
                     { FullName = "John Doe", PhotoUrl = "", Professions = [Domain.Enums.ProfessionType.Director] }
             ],
-            Quality = "4K",
-            StreamingUrl = "https://test",
+            AvailableQualities = new Dictionary<QualityType, string>()
+            {
+                { QualityType.P360 , "parasite-360p" }
+            },
             Actors =
             [
                 new BasePersonInfo
                     { FullName = "Bong Joon-ho", PhotoUrl = "", Professions = [Domain.Enums.ProfessionType.Actor] }
             ],
-            Duration = TimeSpan.FromMinutes(132),
             Budget = 15_500_000,
             AgeRating = "R"
         };
@@ -78,20 +80,21 @@ public class GetMediaFullInfoStorageShould(StorageTestFixture fixture) : IClassF
             ReleasedYearAt = 2019,
             PublishedAt = new DateTimeOffset(new DateTime(2019, 5, 29, 18, 0, 0, DateTimeKind.Utc)),
             Countries = ["South Korea"],
-            Genres = ["Thriller", "Drama"],
-            Quality = "4K",
+            Genres = ["Thriller", "Drama"]
         });
 
         await dbContext.AdditionMediaInfo.InsertOneAsync(new AdditionMovieInfoEntity()
         {
-            StreamingUrl = "https://test",
+            AvailableQualities = new Dictionary<Common.QualityType, string>()
+            {
+                { Common.QualityType.P360 , "parasite-360p" }
+            },
             Actors =
             [
                 new Storage.Models.BasePersonInfo
                     { FullName = "Bong Joon-ho", PhotoUrl = "", Professions = [ProfessionType.Actor] }
             ],
             MediaId = id,
-            Duration = TimeSpan.FromMinutes(132),
             Budget = 15_500_000,
             AgeRating = "R",
             Directors =
@@ -123,8 +126,7 @@ public class GetMediaFullInfoStorageShould(StorageTestFixture fixture) : IClassF
             ReleasedYearAt = 2019,
             PublishedAt = new DateTimeOffset(new DateTime(2019, 5, 29, 18, 0, 0, DateTimeKind.Utc)),
             Countries = ["South Korea"],
-            Genres = ["Thriller", "Drama"],
-            Quality = "4K"
+            Genres = ["Thriller", "Drama"]
         });
 
         var actor = await _sut.Get(movieId, CancellationToken.None);
