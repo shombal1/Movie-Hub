@@ -62,6 +62,12 @@ docker-compose --env-file docker/.env -f docker/services/engine/docker-compose.y
 docker-compose --env-file docker/.env -f docker/services/keycloak-consumer/docker-compose.yml up -d
 ```
 
+Запустить сервис **Ai Narrator**:
+
+```bash
+docker-compose --env-file docker/.env -f docker/services/ai-narrator/docker-compose.yml up -d
+```
+
 ## Структура проекта
 
 ```

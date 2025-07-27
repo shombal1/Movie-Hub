@@ -76,8 +76,9 @@ public static class ServiceCollectionExtension
 
         services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
-        services.AddDbContext<QuartzDbContext>(options =>
-            options.UseNpgsql(quartzPostgresConnectionString));
+        services.AddDbContext<QuartzDbContext>(options => options.UseNpgsql(
+                quartzPostgresConnectionString, 
+                builder => builder.MigrationsHistoryTable("__EFMigrationsHistory", "quartz")));
 
         services.AddSingleton<IS3StorageService, S3StorageService>();
 

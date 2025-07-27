@@ -1,5 +1,6 @@
 using System.Reflection;
 using Confluent.Kafka;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MovieHub.AI.Narrator.Domain.DependencyInjection;
 using MovieHub.AI.Narrator.Integration;
@@ -71,6 +72,12 @@ using (var scope = app.Services.CreateScope())
     }
     
     downloadSettings.Value.LocalStoragePath = localStoragePath;
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<QuartzDbContext>();
+    await dbContext.Database.MigrateAsync();
 }
 
 app.Run();

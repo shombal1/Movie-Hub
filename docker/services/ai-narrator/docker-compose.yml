@@ -1,0 +1,25 @@
+﻿networks:
+  default:
+    name: ${COMPOSE_PROJECT_NETWORK}
+
+services:
+  ai-narrator:
+    build:
+      context: ../../../
+      dockerfile: docker/services/ai-narrator/Dockerfile
+    image: 'movie-hub-ai-narrator:local'
+    container_name:  ${COMPOSE_PROJECT_NAME}-ai-narrator
+    ports:
+      - "9091:8080"
+    labels:
+      com.jetbrains.rider.debug.enable: "true"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "http://+:8080"
+      ConnectionStrings__MovieHubDbContext: "mongodb://host.docker.internal:${MONGO_ROUTER_PORT}"
+      ConnectionStrings__Redis : "${REDIS}:${REDIS_PORT},abortConnect=false"
+      ConnectionStrings__S3Storage: "Endpoint=http://host.docker.internal:${MINIO_API_PORT};AccessKey=${MINIO_ROOT_USER};SecretKey=${MINIO_ROOT_PASSWORD};ForcePathStyle=true"
+      ConnectionStrings__Quartz: "Host=host.docker.internal;Port=5433;Database=quartz_db;Username=quartz_user;Password=quartz_password;Search Path=quartz;"
+      Kafka__BootstrapServers: "${KAFKA_BROKER_CONTAINER}:29092"
+      S3Settings__UploadsBucket: "${MINIO_UPLOADS_BUCKET}"
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
